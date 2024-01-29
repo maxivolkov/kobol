@@ -2,5 +2,5 @@
 
 #include <string>
 
-bool GetInput(std::string& s);
-int InputInit();
+bool get_input(std::string& s);
+int init_input();
