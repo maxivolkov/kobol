@@ -1,10 +1,16 @@
 #pragma once
-#include <string>
-#include <vector>
 
-void uci_command(std::string);
+#include "search.h"
+
+struct s_options
+{
+	int aspiration = 38;
+	int contempt = 0;
+	int hash = 64;
+	int overhead = 10;
+	bool ponder = false;
+};
+
+inline s_options options;
+void uci_command(std::string str);
 void uci_loop();
-void uci_quit();
-bool uci_value(const std::vector<std::string>&, const std::string&, std::string&);
-std::string trim(const std::string&);
-std::vector<std::string>& split_string(const std::string&, std::vector<std::string>&, char);
