@@ -2,5 +2,6 @@
 
 int main()
 	{
+	engine_info();
 	uci_loop();
 	}
