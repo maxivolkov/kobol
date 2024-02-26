@@ -1,7 +1,5 @@
 # kobol
 
-[![Release][release-badge]][release-link]
-  
 [![License][license-badge]][license-link]
 
 #### Search
@@ -22,7 +20,5 @@
 #### Strength
 - very weak, needs a lot of work!
   
-[release-badge]:https://img.shields.io/github/v/release/maxivolkov/kobol?&label=official%20release
-[release-link]:https://github.com/maxivolkov/kobol/releases/latest
 [license-badge]:https://img.shields.io/github/license/maxivolkov/kobol?&label=license&color=blue
 [license-link]:https://github.com/maxivolkov/kobol/blob/main/LICENSE
