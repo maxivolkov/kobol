@@ -6,7 +6,19 @@
 
 [![License][license-badge]][license-link]
 
-uci chess engine
+- UCI chess engine
+- Itereative search
+- Principal variation
+- Alpha Beta search
+- Quiesce search
+- Mate distance pruning
+- Hash table pruning
+- Reverse futility pruning
+- Null move pruning
+- Razoring
+- Aspiration window
+- Material eval
+- PST eval
 
 [release-badge]:https://img.shields.io/github/v/release/maxivolkov/kobol?&label=official%20release
 [release-link]:https://github.com/maxivolkov/kobol/releases/latest
