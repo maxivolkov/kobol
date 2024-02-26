@@ -20,7 +20,7 @@
 - PST eval
 
 #### Strength
-- approx. 2200 Elo
+- very weak
   
 [release-badge]:https://img.shields.io/github/v/release/maxivolkov/kobol?&label=official%20release
 [release-link]:https://github.com/maxivolkov/kobol/releases/latest
