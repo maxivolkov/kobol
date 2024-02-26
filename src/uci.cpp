@@ -112,7 +112,7 @@ void uci_command(std::string str)
   {
     std::cout << "id name kobol\n";
     std::cout << "id author maksim\n";
-    std::cout << "option name Hash type spin " << options.hash << " min 64 max 65536\n";
+    std::cout << "option name Hash type spin default " << options.hash << " min 64 max 65536\n";
     std::cout << "option name Contempt type spin default " << options.contempt << " min -50 max 50\n";
     std::cout << "option name Ponder type check default " << options.ponder << " true false\n";
     std::cout << "uciok" << std::endl;
