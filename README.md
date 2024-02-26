@@ -28,6 +28,7 @@
 - Ponder
 
 #### Tests
+- Bench
 - Perft
 
 [release-badge]:https://img.shields.io/github/v/release/maxivolkov/kobol?&label=official%20release
