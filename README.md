@@ -3,8 +3,9 @@
 
 [![Release][release-badge]][release-link]
 [![License][license-badge]][license-link]
+
 ![Downloads][downloads-badge]
-  
+
 #### Search
 - Iterative search
 - Principal variation
