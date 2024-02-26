@@ -1,9 +1,7 @@
 # kobol
 ![alt tag](https://raw.githubusercontent.com/maxivolkov/kobol/main/src/kobol.png)
 
-[![Release][release-badge]][release-link]
-  
-[![License][license-badge]][license-link]
+[![Release][release-badge]][release-link] [![License][license-badge]][license-link]
 
 #### Search
 - Iterative search
