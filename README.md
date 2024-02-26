@@ -6,7 +6,7 @@
 
 [![License][license-badge]][license-link]
 
-- UCI chess engine
+### Search
 - Iterative search
 - Principal variation
 - Alpha Beta search
@@ -16,6 +16,8 @@
 - Null move pruning
 - Razoring
 - Aspiration window
+
+### Eval
 - Material eval
 - PST eval
 
