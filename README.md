@@ -1,4 +1,5 @@
 # kobol
+![alt tag](https://raw.githubusercontent.com/maxivolkov/kobol/main/kobol.png)
 
 [![Release][release-badge]][release-link]
   
