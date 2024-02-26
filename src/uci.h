@@ -4,11 +4,11 @@
 
 struct s_options
 {
-	int aspiration = 38;
-	int contempt = 0;
-	int hash = 64;
-	int overhead = 10;
-	bool ponder = false;
+  int aspiration = 38;
+  int contempt = 0;
+  int hash = 64;
+  int overhead = 10;
+  bool ponder = false;
 };
 
 inline s_options options;
