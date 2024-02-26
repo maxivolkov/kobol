@@ -36,4 +36,4 @@
 [release-link]:https://github.com/maxivolkov/kobol/releases/latest
 [license-badge]:https://img.shields.io/github/license/maxivolkov/kobol?&label=license&color=blue
 [license-link]:https://github.com/maxivolkov/kobol/blob/main/LICENSE
-[downloads-badge]:https://img.shields.io/github/downloads/maxivolkov/kobol/total?color=success&style=for-the-badge
+[downloads-badge]:https://img.shields.io/github/downloads/maxivolkov/kobol/total?color=success
