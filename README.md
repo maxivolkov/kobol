@@ -8,7 +8,7 @@
 - Iterative search
 - Principal variation
 - Alpha Beta search
-- Quiesce search
+- Quiescent search
 - Mate distance pruning
 - Reverse futility pruning
 - Null move pruning
