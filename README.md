@@ -4,7 +4,7 @@
   
 [![License][license-badge]][license-link]
 
-### Search
+#### Search
 - Iterative search
 - Principal variation
 - Alpha Beta search
@@ -15,7 +15,7 @@
 - Razoring
 - Aspiration window
 
-### Eval
+#### Eval
 - Material eval
 - PST eval
 
