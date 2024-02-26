@@ -7,12 +7,11 @@
 [![License][license-badge]][license-link]
 
 - UCI chess engine
-- Itereative search
+- Iterative search
 - Principal variation
 - Alpha Beta search
 - Quiesce search
 - Mate distance pruning
-- Hash table pruning
 - Reverse futility pruning
 - Null move pruning
 - Razoring
