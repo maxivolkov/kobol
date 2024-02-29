@@ -1,14 +1,12 @@
 #pragma once
 #include "move.h"
 
-struct picker
-{
+struct picker {
   move mv;
   int16_t score = 0;
 };
 
-class movepick
-{
+class movepick {
 public:
   int count = 0;
   move list[228];

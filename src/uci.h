@@ -2,8 +2,7 @@
 
 #include "search.h"
 
-struct s_options
-{
+struct s_options {
   int aspiration = 38;
   int contempt = 0;
   int hash = 64;

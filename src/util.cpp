@@ -3,24 +3,20 @@
 #include <ostream>
 #include "util.h"
 
-void engine_info()
-{
+void engine_info() {
   std::cout << "kobol 1.0" << std::endl;
 }
 
-std::string trim(const std::string& s)
-{
+std::string trim(const std::string& s) {
   if (s.empty())
     return s;
   auto start = s.begin();
-  while (start != s.end() && std::isspace(*start))
-  {
+  while (start != s.end() && std::isspace(*start)) {
     ++start;
   }
 
   auto end = s.end();
-  do
-  {
+  do {
     --end;
   }
   while (std::distance(start, end) > 0 && std::isspace(*end));
@@ -28,14 +24,12 @@ std::string trim(const std::string& s)
   return std::string(start, end + 1);
 }
 
-std::vector<std::string>& split_string(const std::string& txt, std::vector<std::string>& str, const char ch)
-{
+std::vector<std::string>& split_string(const std::string& txt, std::vector<std::string>& str, const char ch) {
   size_t strpos = txt.find(ch);
   size_t initial_pos = 0;
   str.clear();
 
-  while (strpos != std::string::npos)
-  {
+  while (strpos != std::string::npos) {
     str.push_back(txt.substr(initial_pos, strpos - initial_pos));
     initial_pos = strpos + 1;
 
@@ -47,8 +41,7 @@ std::vector<std::string>& split_string(const std::string& txt, std::vector<std::
   return str;
 }
 
-std::string str_to_lower(std::string s)
-{
+std::string str_to_lower(std::string s) {
   std::ranges::transform(s, s.begin(), tolower);
   return s;
 }

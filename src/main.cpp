@@ -5,8 +5,7 @@
 #include "util.h"
 #include "zobrist.h"
 
-int main()
-{
+int main() {
   engine_info();
   init_eval();
   init_tables();

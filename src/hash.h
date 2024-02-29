@@ -1,15 +1,13 @@
 #pragma once
 #include "uci.h"
 
-enum entry_type :uint8_t
-{
+enum entry_type :uint8_t {
   node_pv = 0,
   node_cut = 1,
   node_all = 2
 };
 
-struct entry
-{
+struct entry {
   uint64_t hash; //8
   uint16_t mv; //2
   int16_t score; //2
@@ -18,8 +16,7 @@ struct entry
   uint16_t age; //2
 
   void entry_data(const uint64_t h, const int16_t s, const uint16_t m, const entry_type t, const uint8_t d,
-                  const uint16_t a)
-  {
+    const uint16_t a) {
     hash = h;
     score = s;
     mv = m;
@@ -29,8 +26,7 @@ struct entry
   }
 };
 
-class hash_table
-{
+class hash_table {
   uint64_t used_{};
   uint64_t size_{};
   uint64_t mask_{};
@@ -39,29 +35,24 @@ class hash_table
 public:
   uint16_t age{};
 
-  hash_table()
-  {
+  hash_table() {
     resize(options.hash);
   }
 
-  ~hash_table()
-  {
+  ~hash_table() {
     delete tt_;
   }
 
-  void clear()
-  {
+  void clear() {
     used_ = 0;
     std::memset(tt_, 0, sizeof(entry) * size_);
   }
 
-  [[nodiscard]] int per_million() const
-  {
+  [[nodiscard]] int per_million() const {
     return static_cast<int>(used_ * 1000ul / size_);
   }
 
-  void resize(const uint64_t mb_size)
-  {
+  void resize(const uint64_t mb_size) {
     size_ = 1;
     while (size_ <= mb_size)
       size_ <<= 1;
@@ -72,12 +63,10 @@ public:
     clear();
   }
 
-  bool set_entry(const uint64_t hash, const int16_t score, const uint16_t mv, const entry_type type, const int depth)
-  {
+  bool set_entry(const uint64_t hash, const int16_t score, const uint16_t mv, const entry_type type, const int depth) {
     const uint64_t index = hash & mask_;
     entry* en_p = &tt_[index];
-    if (!en_p->hash)
-    {
+    if (!en_p->hash) {
       en_p->entry_data(hash, score, mv, type, static_cast<uint8_t>(depth), age);
       used_++;
       return true;
@@ -85,16 +74,14 @@ public:
     if (
       en_p->age != age
       || type == node_pv
-      || (en_p->type != node_pv && en_p->depth <= depth))
-    {
+      || (en_p->type != node_pv && en_p->depth <= depth)) {
       en_p->entry_data(hash, score, mv, type, static_cast<uint8_t>(depth), age);
       return true;
     }
     return false;
   }
 
-  [[nodiscard]] entry* get_entry(const uint64_t hash) const
-  {
+  [[nodiscard]] entry* get_entry(const uint64_t hash) const {
     const uint64_t index = hash & mask_;
     if (entry* en_p = &tt_[index]; en_p->hash == hash)
       return en_p;

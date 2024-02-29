@@ -11,26 +11,22 @@
 bool pipe;
 HANDLE hstdin;
 
-int init_input()
-{
+int init_input() {
   unsigned long dw;
   hstdin = GetStdHandle(STD_INPUT_HANDLE);
   pipe = !GetConsoleMode(hstdin, &dw);
-  if (!pipe)
-  {
+  if (!pipe) {
     SetConsoleMode(hstdin, dw & ~(ENABLE_MOUSE_INPUT | ENABLE_WINDOW_INPUT));
     FlushConsoleInputBuffer(hstdin);
   }
-  else
-  {
+  else {
     setvbuf(stdin, nullptr, _IONBF, 0);
     setvbuf(stdout, nullptr, _IONBF, 0);
   }
   return 0;
 }
 
-bool input()
-{
+bool input() {
   unsigned long dw = 0;
   if (pipe)
     PeekNamedPipe(hstdin, nullptr, 0, nullptr, &dw, nullptr);
@@ -39,8 +35,7 @@ bool input()
   return dw > 1;
 }
 
-char* getsafe(char* buffer, const int count)
-{
+char* getsafe(char* buffer, const int count) {
   char* result = buffer;
   if (buffer == nullptr || count < 1)
     result = nullptr;
@@ -52,8 +47,7 @@ char* getsafe(char* buffer, const int count)
   return result;
 }
 
-bool get_input(std::string& s)
-{
+bool get_input(std::string& s) {
   char command[5000];
   if (!input())
     return false;

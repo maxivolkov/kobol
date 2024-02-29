@@ -1,7 +1,6 @@
 #pragma once
 
-enum time_factor
-{
+enum time_factor {
   tf_time = 1,
   tf_inc = 2,
   tf_movestogo = 4,
@@ -12,8 +11,7 @@ enum time_factor
   tf_infinite = 128
 };
 
-struct search_param
-{
+struct search_param {
   bool game_over;
   bool ponder;
   bool post;
@@ -25,8 +23,7 @@ struct search_param
   int movetime;
   int flags;
 
-  void reset()
-  {
+  void reset() {
     game_over = false;
     ponder = false;
     post = true;

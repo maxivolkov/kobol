@@ -7,28 +7,24 @@
 #include "util.h"
 #include "uci.h"
 
-bool uci_value(const std::vector<std::string>& list, const std::string& command, std::string& value)
-{
+bool uci_value(const std::vector<std::string>& list, const std::string& command, std::string& value) {
   value = "";
   for (size_t n = 0; n < list.size() - 1; n++)
-    if (list[n] == command)
-    {
+    if (list[n] == command) {
       value = list[n + 1];
       return true;
     }
   return false;
 }
 
-uint64_t perft(const int depth)
-{
+uint64_t perft(const int depth) {
   uint64_t nodes = 0;
   int count;
   move list[256];
   pos.move_list(pos.color_us(), list, count);
   if (depth == 1)
     return count;
-  for (int i = 0; i < count; i++)
-  {
+  for (int i = 0; i < count; i++) {
     pos.make_move(list[i]);
     nodes += perft(depth - 1);
     pos.unmake_move(list[i]);
@@ -36,13 +32,11 @@ uint64_t perft(const int depth)
   return nodes;
 }
 
-void uci_perft(const int depth)
-{
+void uci_perft(const int depth) {
   pos.set_fen(start_fen);
   std::cout << pos << '\n';
 
-  for (int d = 1; d <= depth; d++)
-  {
+  for (int d = 1; d <= depth; d++) {
     const std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     const uint64_t nodes = perft(d);
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
@@ -54,14 +48,12 @@ void uci_perft(const int depth)
   }
 }
 
-void uci_bench(const int depth)
-{
+void uci_bench(const int depth) {
   pos.set_fen(start_fen);
   std::cout << pos << '\n';
   sp.post = false;
   sp.flags = tf_depth;
-  for (int d = 1; d <= depth; d++)
-  {
+  for (int d = 1; d <= depth; d++) {
     const std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     sp.depth = d;
     search_iterate();
@@ -75,31 +67,26 @@ void uci_bench(const int depth)
   }
 }
 
-void uci_eval()
-{
+void uci_eval() {
   const auto score = static_cast<uint16_t>(eval());
   std::cout << "score " << score << std::endl;
 }
 
-void uci_ponderhit()
-{
+void uci_ponderhit() {
   sp.ponder = false;
   sp.flags &= ~tf_infinite;
   sd.time_start = std::chrono::steady_clock::now();
 }
 
-void uci_quit()
-{
+void uci_quit() {
   exit(0);
 }
 
-void uci_stop()
-{
+void uci_stop() {
   sp.game_over = true;
 }
 
-void uci_command(std::string str)
-{
+void uci_command(std::string str) {
   str = trim(str);
   std::string value;
   std::vector<std::string> split{};
@@ -108,8 +95,7 @@ void uci_command(std::string str)
   if (split.empty())
     return;
 
-  if (const std::string command = split[0]; command == "uci")
-  {
+  if (const std::string command = split[0]; command == "uci") {
     std::cout << "id name kobol\n";
     std::cout << "id author maksim\n";
     std::cout << "option name Hash type spin default " << options.hash << " min 64 max 65536\n";
@@ -123,15 +109,13 @@ void uci_command(std::string str)
   else if (command == "ucinewgame")
     tt.clear();
 
-  else if (command == "position")
-  {
+  else if (command == "position") {
     bool bfen = false;
     bool bmov = false;
     int i = 0;
     std::string fen;
     std::vector<std::string> moves = {};
-    while (static_cast<uint64_t>(i) < split.size())
-    {
+    while (static_cast<uint64_t>(i) < split.size()) {
       if (bfen)
         fen += ' ' + split[i];
       if (bmov)
@@ -144,71 +128,58 @@ void uci_command(std::string str)
     }
     fen = trim(fen);
     pos.set_fen(fen.empty() ? start_fen : fen);
-    for (const std::string& uci : moves)
-    {
+    for (const std::string& uci : moves) {
       for (auto list = move_list(pos); move mv : list)
         if (mv.to_uci() == uci)
           pos.make_move(mv);
     }
   }
 
-  else if (command == "go")
-  {
+  else if (command == "go") {
     sp.reset();
-    if (std::string token; uci_value(split, "go", token))
-    {
+    if (std::string token; uci_value(split, "go", token)) {
       if (token == "infinite")
         sp.flags |= tf_infinite;
-      if (token == "ponder")
-      {
+      if (token == "ponder") {
         sp.ponder = true;
         sp.flags |= tf_infinite;
       }
     }
-    if (uci_value(split, "wtime", value))
-    {
+    if (uci_value(split, "wtime", value)) {
       sp.flags |= tf_time;
       sp.time[white] = stoi(value);
     }
-    if (uci_value(split, "btime", value))
-    {
+    if (uci_value(split, "btime", value)) {
       sp.flags |= tf_time;
       sp.time[black] = stoi(value);
     }
-    if (uci_value(split, "winc", value))
-    {
+    if (uci_value(split, "winc", value)) {
       sp.flags |= tf_inc;
       sp.inc[white] = stoi(value);
     }
-    if (uci_value(split, "binc", value))
-    {
+    if (uci_value(split, "binc", value)) {
       sp.flags |= tf_inc;
       sp.inc[black] = stoi(value);
     }
-    if (uci_value(split, "movestogo", value))
-    {
+    if (uci_value(split, "movestogo", value)) {
       sp.flags |= tf_movestogo;
       sp.movestogo = stoi(value);
     }
-    if (uci_value(split, "depth", value))
-    {
+    if (uci_value(split, "depth", value)) {
       sp.flags |= tf_depth;
       sp.depth = stoi(value);
     }
-    if (uci_value(split, "nodes", value))
-    {
+    if (uci_value(split, "nodes", value)) {
       sp.flags |= tf_nodes;
       sp.nodes = stoi(value);
     }
-    if (uci_value(split, "movetime", value))
-    {
+    if (uci_value(split, "movetime", value)) {
       sp.flags |= tf_movetime;
       sp.movetime = stoi(value);
     }
     if (!sp.flags)
       sp.flags |= tf_infinite;
-    if (sp.flags & tf_time)
-    {
+    if (sp.flags & tf_time) {
       sp.flags |= tf_movetime;
       if (sp.movestogo)
         sp.movetime = sp.time[pos.color_us()] / sp.movestogo;
@@ -228,12 +199,10 @@ void uci_command(std::string str)
   else if (command == "stop")
     uci_stop();
 
-  else if (command == "setoption")
-  {
+  else if (command == "setoption") {
     const bool val = uci_value(split, "value", value);
 
-    if (std::string name; val && uci_value(split, "name", name))
-    {
+    if (std::string name; val && uci_value(split, "name", name)) {
       if (name == "Contempt")
         options.contempt = stoi(value) * 10;
 
@@ -245,16 +214,14 @@ void uci_command(std::string str)
     }
   }
 
-  else if (command == "bench")
-  {
+  else if (command == "bench") {
     if (uci_value(split, "bench", value))
       uci_bench(stoi(value));
     else
       uci_bench(12);
   }
 
-  else if (command == "perft")
-  {
+  else if (command == "perft") {
     if (uci_value(split, "perft", value))
       uci_perft(stoi(value));
     else
@@ -268,12 +235,10 @@ void uci_command(std::string str)
     std::cout << pos;
 }
 
-void uci_loop()
-{
+void uci_loop() {
   pos.set_fen();
   std::string str;
-  while (true)
-  {
+  while (true) {
     getline(std::cin, str);
     uci_command(str);
   }

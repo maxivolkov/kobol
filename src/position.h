@@ -6,8 +6,7 @@
 #include "zobrist.h"
 #include "main.h"
 
-struct undo_info
-{
+struct undo_info {
   bool in_check;
   uint64_t entry;
   piece captured;
@@ -15,18 +14,13 @@ struct undo_info
   uint64_t hash;
   int move50;
 
-  constexpr undo_info() : in_check(false), entry(0), captured(no_piece), epsq(no_square), hash(0), move50(0)
-  {
-  }
+  constexpr undo_info() : in_check(false), entry(0), captured(no_piece), epsq(no_square), hash(0), move50(0) {}
 
   undo_info(const undo_info& prev) :
-    in_check(false), entry(prev.entry), captured(no_piece), epsq(no_square), hash(0), move50(0)
-  {
-  }
+    in_check(false), entry(prev.entry), captured(no_piece), epsq(no_square), hash(0), move50(0) {}
 };
 
-class position
-{
+class position {
   uint64_t hash_;
 
 public:
@@ -43,21 +37,18 @@ public:
   uint64_t pinned;
 
   position() : hash_(0), side_to_play(white), history_index(0), board{},
-               piece_bb{0}, checkers(0), pinned(0)
-  {
+               piece_bb{0}, checkers(0), pinned(0) {
     for (auto& i : board) i = no_piece;
     history[0] = undo_info();
   }
 
-  void put_piece(const piece pc, const square s)
-  {
+  void put_piece(const piece pc, const square s) {
     board[s] = pc;
     piece_bb[pc] |= square_bb[s];
     hash_ ^= zobrist_table[pc][s];
   }
 
-  void remove_piece(const square s)
-  {
+  void remove_piece(const square s) {
     hash_ ^= zobrist_table[board[s]][s];
     piece_bb[board[s]] &= ~square_bb[s];
     board[s] = no_piece;
@@ -70,8 +61,7 @@ public:
   void set_fen(const std::string& fen = start_fen);
   [[nodiscard]] std::string get_fen() const;
 
-  void clear()
-  {
+  void clear() {
     side_to_play = white;
     history_index = 0;
     hash_ = 0;
@@ -90,8 +80,7 @@ public:
   [[nodiscard]] uint64_t bitboard_of(const piece pc) const { return piece_bb[pc]; }
   [[nodiscard]] uint64_t bitboard_of(const color c, const piece_type pt) const { return piece_bb[make_piece(c, pt)]; }
 
-  [[nodiscard]] uint64_t all_pieces() const
-  {
+  [[nodiscard]] uint64_t all_pieces() const {
     return
       piece_bb[white_pawn] | piece_bb[white_knight] | piece_bb[white_bishop] | piece_bb[white_rook] | piece_bb[
         white_queen] | piece_bb[white_king] |
@@ -110,16 +99,13 @@ public:
   [[nodiscard]] bool in_check() const;
   bool is_legal(const move& mv);
 
-  [[nodiscard]] int game_phase() const
-  {
+  [[nodiscard]] int game_phase() const {
     const int result = popcnt(all_pieces()) - 4;
     return result < 0 ? 0 : result;
   }
 
-  [[nodiscard]] bool is_repetition() const
-  {
-    for (int n = history_index - 2; n >= history_index - move50; n -= 2)
-    {
+  [[nodiscard]] bool is_repetition() const {
+    for (int n = history_index - 2; n >= history_index - move50; n -= 2) {
       if (n < 0)
         return false;
       if (history[n].hash == hash_)
@@ -144,25 +130,21 @@ public:
   move* generate_moves(color us, move* list, bool quietmove = true);
 };
 
-inline uint64_t position::diagonal_sliders(const color c) const
-{
+inline uint64_t position::diagonal_sliders(const color c) const {
   return c == white ? piece_bb[white_bishop] | piece_bb[white_queen] : piece_bb[black_bishop] | piece_bb[black_queen];
 }
 
-inline uint64_t position::orthogonal_sliders(const color c) const
-{
+inline uint64_t position::orthogonal_sliders(const color c) const {
   return c == white ? piece_bb[white_rook] | piece_bb[white_queen] : piece_bb[black_rook] | piece_bb[black_queen];
 }
 
-inline bool position::not_only_pawns() const
-{
+inline bool position::not_only_pawns() const {
   return side_to_play == white
            ? piece_bb[white_knight] || piece_bb[white_bishop] || piece_bb[white_rook] || piece_bb[white_queen]
            : piece_bb[black_knight] || piece_bb[black_bishop] || piece_bb[black_rook] || piece_bb[black_queen];
 }
 
-inline uint64_t position::all_pieces(const color c) const
-{
+inline uint64_t position::all_pieces(const color c) const {
   return c == white
            ? piece_bb[white_pawn] | piece_bb[white_knight] | piece_bb[white_bishop] |
            piece_bb[white_rook] | piece_bb[white_queen] | piece_bb[white_king]
@@ -170,8 +152,7 @@ inline uint64_t position::all_pieces(const color c) const
            piece_bb[black_rook] | piece_bb[black_queen] | piece_bb[black_king];
 }
 
-inline uint64_t position::attackers_from(const color c, const square s, const uint64_t occ) const
-{
+inline uint64_t position::attackers_from(const color c, const square s, const uint64_t occ) const {
   return c == white
            ? (pawnattacks(black, s) & piece_bb[white_pawn]) |
            (attacks<knight>(s, occ) & piece_bb[white_knight]) |
@@ -183,8 +164,7 @@ inline uint64_t position::attackers_from(const color c, const square s, const ui
            (attacks<rook>(s, occ) & (piece_bb[black_rook] | piece_bb[black_queen]));
 }
 
-inline uint64_t position::attackers(const square s) const
-{
+inline uint64_t position::attackers(const square s) const {
   const uint64_t occ = all_pieces();
   return side_to_play == black
            ? (pawnattacks(black, s) & piece_bb[white_pawn]) |
@@ -197,16 +177,11 @@ inline uint64_t position::attackers(const square s) const
            (attacks<rook>(s, occ) & (piece_bb[black_rook] | piece_bb[black_queen]));
 }
 
-class move_list
-{
+class move_list {
 public:
-  explicit move_list(position& p, const color color) : last_(p.generate_moves(color, list))
-  {
-  }
+  explicit move_list(position& p, const color color) : last_(p.generate_moves(color, list)) {}
 
-  explicit move_list(position& p) : last_(p.generate_moves(p.color_us(), list))
-  {
-  }
+  explicit move_list(position& p) : last_(p.generate_moves(p.color_us(), list)) {}
 
   [[nodiscard]] const move* begin() const { return list; }
   [[nodiscard]] const move* end() const { return last_; }

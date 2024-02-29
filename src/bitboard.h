@@ -1,8 +1,7 @@
 #pragma once
 #include "main.h"
 
-inline constexpr uint64_t square_bb[65] =
-{
+inline constexpr uint64_t square_bb[65] = {
   0x1, 0x2, 0x4, 0x8,
   0x10, 0x20, 0x40, 0x80,
   0x100, 0x200, 0x400, 0x800,
@@ -22,8 +21,7 @@ inline constexpr uint64_t square_bb[65] =
   0x0
 };
 
-constexpr uint64_t king_attacks[64] =
-{
+constexpr uint64_t king_attacks[64] = {
   0x302, 0x705, 0xe0a, 0x1c14,
   0x3828, 0x7050, 0xe0a0, 0xc040,
   0x30203, 0x70507, 0xe0a0e, 0x1c141c,
@@ -42,8 +40,7 @@ constexpr uint64_t king_attacks[64] =
   0x2838000000000000, 0x5070000000000000, 0xa0e0000000000000, 0x40c0000000000000,
 };
 
-constexpr uint64_t knight_attacks[64] =
-{
+constexpr uint64_t knight_attacks[64] = {
   0x20400, 0x50800, 0xa1100, 0x142200,
   0x284400, 0x508800, 0xa01000, 0x402000,
   0x2040004, 0x5080008, 0xa110011, 0x14220022,
@@ -62,8 +59,7 @@ constexpr uint64_t knight_attacks[64] =
   0x44280000000000, 0x0088500000000000, 0x0010a00000000000, 0x20400000000000
 };
 
-constexpr uint64_t white_pawn_attacks[64] =
-{
+constexpr uint64_t white_pawn_attacks[64] = {
   0x200, 0x500, 0xa00, 0x1400,
   0x2800, 0x5000, 0xa000, 0x4000,
   0x20000, 0x50000, 0xa0000, 0x140000,
@@ -82,8 +78,7 @@ constexpr uint64_t white_pawn_attacks[64] =
   0x0, 0x0, 0x0, 0x0,
 };
 
-constexpr uint64_t black_pawn_attacks[64] =
-{
+constexpr uint64_t black_pawn_attacks[64] = {
   0x0, 0x0, 0x0, 0x0,
   0x0, 0x0, 0x0, 0x0,
   0x2, 0x5, 0xa, 0x14,
@@ -102,8 +97,7 @@ constexpr uint64_t black_pawn_attacks[64] =
   0x28000000000000, 0x50000000000000, 0xa0000000000000, 0x40000000000000,
 };
 
-inline constexpr uint64_t bishop_magics[64] =
-{
+inline constexpr uint64_t bishop_magics[64] = {
   0x0002020202020200, 0x0002020202020000, 0x0004010202000000, 0x0004040080000000,
   0x0001104000000000, 0x0000821040000000, 0x0000410410400000, 0x0000104104104000,
   0x0000040404040400, 0x0000020202020200, 0x0000040102020000, 0x0000040400800000,
@@ -122,8 +116,7 @@ inline constexpr uint64_t bishop_magics[64] =
   0x0000000010020200, 0x0000000404080200, 0x0000040404040400, 0x0002020202020200
 };
 
-inline constexpr uint64_t rook_magics[64] =
-{
+inline constexpr uint64_t rook_magics[64] = {
   0x0080001020400080, 0x0040001000200040, 0x0080081000200080, 0x0080040800100080,
   0x0080020400080080, 0x0080010200040080, 0x0080008001000200, 0x0080002040800100,
   0x0000800020400080, 0x0000400020005000, 0x0000801000200080, 0x0000800800100080,
@@ -142,20 +135,17 @@ inline constexpr uint64_t rook_magics[64] =
   0x0001000204080011, 0x0001000204000801, 0x0001000082000401, 0x0001FFFAABFAD1A2
 };
 
-inline constexpr uint64_t mask_file[8] =
-{
+inline constexpr uint64_t mask_file[8] = {
   0x101010101010101, 0x202020202020202, 0x404040404040404, 0x808080808080808,
   0x1010101010101010, 0x2020202020202020, 0x4040404040404040, 0x8080808080808080,
 };
 
-inline constexpr uint64_t mask_rank[8] =
-{
+inline constexpr uint64_t mask_rank[8] = {
   0xff, 0xff00, 0xff0000, 0xff000000,
   0xff00000000, 0xff0000000000, 0xff000000000000, 0xff00000000000000
 };
 
-inline constexpr uint64_t mask_diagonal[15] =
-{
+inline constexpr uint64_t mask_diagonal[15] = {
   0x80, 0x8040, 0x804020,
   0x80402010, 0x8040201008, 0x804020100804,
   0x80402010080402, 0x8040201008040201, 0x4020100804020100,
@@ -163,8 +153,7 @@ inline constexpr uint64_t mask_diagonal[15] =
   0x402010000000000, 0x201000000000000, 0x100000000000000,
 };
 
-inline constexpr uint64_t mask_anti_diagonal[15] =
-{
+inline constexpr uint64_t mask_anti_diagonal[15] = {
   0x1, 0x102, 0x10204,
   0x1020408, 0x102040810, 0x10204081020,
   0x1020408102040, 0x102040810204080, 0x204081020408000,
@@ -172,8 +161,7 @@ inline constexpr uint64_t mask_anti_diagonal[15] =
   0x2040800000000000, 0x4080000000000000, 0x8000000000000000,
 };
 
-constexpr uint64_t shift(const direction d, const uint64_t b)
-{
+constexpr uint64_t shift(const direction d, const uint64_t b) {
   return d == north
            ? b << 8
            : d == south
@@ -212,13 +200,11 @@ constexpr uint64_t all_castling_mask = 0x9100000000000091;
 constexpr uint64_t oo_mask(const color c) { return c == white ? white_oo_mask : black_oo_mask; }
 constexpr uint64_t ooo_mask(const color c) { return c == white ? white_ooo_mask : black_ooo_mask; }
 
-constexpr uint64_t oo_blockers_mask(const color c)
-{
+constexpr uint64_t oo_blockers_mask(const color c) {
   return c == white ? white_oo_blockers_and_attackers_mask : black_oo_blockers_and_attackers_mask;
 }
 
-constexpr uint64_t ooo_blockers_mask(const color c)
-{
+constexpr uint64_t ooo_blockers_mask(const color c) {
   return c == white ? white_ooo_blockers_and_attackers_mask : black_ooo_blockers_and_attackers_mask;
 }
 
@@ -251,8 +237,7 @@ inline void init_bishop_attacks();
 inline uint64_t get_xray_bishop_attacks(square sq, uint64_t occ, uint64_t blockers);
 
 template <piece_type P>
-constexpr uint64_t attacks(const square s, const uint64_t occ)
-{
+constexpr uint64_t attacks(const square s, const uint64_t occ) {
   return P == rook
            ? get_rook_attacks(s, occ)
            : P == bishop
@@ -262,10 +247,8 @@ constexpr uint64_t attacks(const square s, const uint64_t occ)
            : pseudo_legal_attacks[P][s];
 }
 
-constexpr uint64_t attacks(const piece_type pt, const square s, const uint64_t occ)
-{
-  switch (pt)
-  {
+constexpr uint64_t attacks(const piece_type pt, const square s, const uint64_t occ) {
+  switch (pt) {
   case rook:
     return attacks<rook>(s, occ);
   case bishop:
@@ -281,13 +264,11 @@ constexpr uint64_t attacks(const piece_type pt, const square s, const uint64_t o
   return 0;
 }
 
-constexpr uint64_t pawnattacks(const color c, const uint64_t p)
-{
+constexpr uint64_t pawnattacks(const color c, const uint64_t p) {
   return c == white ? shift(northwest, p) | shift(northeast, p) : shift(southwest, p) | shift(southeast, p);
 }
 
-constexpr uint64_t pawnattacks(const color c, const square s)
-{
+constexpr uint64_t pawnattacks(const color c, const square s) {
   return pawn_attacks[c][s];
 }
 

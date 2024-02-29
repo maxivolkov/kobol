@@ -4,8 +4,7 @@
 #include "uci.h"
 #include "timeman.h"
 
-bool check_time()
-{
+bool check_time() {
   if (std::string input; get_input(input))
     uci_command(input);
   if (sp.game_over)

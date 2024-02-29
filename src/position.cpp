@@ -4,12 +4,9 @@
 #include "main.h"
 #include "position.h"
 
-std::ostream& operator<<(std::ostream& os, const position& p)
-{
-  for (int i = 56; i >= 0; i -= 8)
-  {
-    for (int j = 0; j < 8; j++)
-    {
+std::ostream& operator<<(std::ostream& os, const position& p) {
+  for (int i = 56; i >= 0; i -= 8) {
+    for (int j = 0; j < 8; j++) {
       const piece piece = p.board[i + j];
       os << piece_str[piece] << " ";
     }
@@ -23,54 +20,45 @@ std::ostream& operator<<(std::ostream& os, const position& p)
   return os;
 }
 
-void position::move_list(const color color, move* list, int& count)
-{
+void position::move_list(const color color, move* list, int& count) {
   const move* last = generate_moves(color, list);
   count = static_cast<int>(last - list);
 }
 
-void position::move_list_q(const color color, move* list, int& count)
-{
+void position::move_list_q(const color color, move* list, int& count) {
   const move* last = generate_moves(color, list, false);
   count = static_cast<int>(last - list);
 }
 
-void position::move_list(move* list, int& count)
-{
+void position::move_list(move* list, int& count) {
   const move* last = generate_moves(color_us(), list);
   count = static_cast<int>(last - list);
 }
 
-void position::move_list_q(move* list, int& count)
-{
+void position::move_list_q(move* list, int& count) {
   const move* last = generate_moves(color_us(), list, false);
   count = static_cast<int>(last - list);
 }
 
-bool position::is_legal(const move& mv)
-{
+bool position::is_legal(const move& mv) {
   move list[218];
   generate_moves(side_to_play, list);
-  for (move m : list)
-  {
+  for (move m : list) {
     if (m == mv)
       return true;
   }
   return false;
 }
 
-bool position::in_check(const color color) const
-{
+bool position::in_check(const color color) const {
   return attackers_from(~color, lsb(bitboard_of(color, king)), all_pieces());
 }
 
-bool position::in_check() const
-{
+bool position::in_check() const {
   return attackers_from(~side_to_play, lsb(bitboard_of(side_to_play, king)), all_pieces());
 }
 
-void position::make_null()
-{
+void position::make_null() {
   hash_ ^= hash_color;
   side_to_play = ~side_to_play;
   ++history_index;
@@ -78,15 +66,13 @@ void position::make_null()
   history[history_index].epsq = no_square;
 }
 
-void position::unmake_null()
-{
+void position::unmake_null() {
   hash_ ^= hash_color;
   side_to_play = ~side_to_play;
   --history_index;
 }
 
-void position::make_move(const move& m)
-{
+void position::make_move(const move& m) {
   hash_ ^= hash_color;
   const color c = side_to_play;
   side_to_play = ~side_to_play;
@@ -97,8 +83,7 @@ void position::make_move(const move& m)
   const move_flags type = m.flags();
   history[history_index].entry |= square_bb[to] | square_bb[fr];
   move50 = type == quiet && type_of(board[fr]) != pawn ? ++move50 : 0;
-  switch (type)
-  {
+  switch (type) {
   case quiet:
     move_piece_quiet(m.from(), m.to());
     break;
@@ -108,25 +93,21 @@ void position::make_move(const move& m)
     history[history_index].epsq = m.from() + relative_dir(c, north);
     break;
   case oo:
-    if (c == white)
-    {
+    if (c == white) {
       move_piece_quiet(e1, g1);
       move_piece_quiet(h1, f1);
     }
-    else
-    {
+    else {
       move_piece_quiet(e8, g8);
       move_piece_quiet(h8, f8);
     }
     break;
   case ooo:
-    if (c == white)
-    {
+    if (c == white) {
       move_piece_quiet(e1, c1);
       move_piece_quiet(a1, d1);
     }
-    else
-    {
+    else {
       move_piece_quiet(e8, c8);
       move_piece_quiet(a8, d8);
     }
@@ -187,13 +168,11 @@ void position::make_move(const move& m)
   history[history_index].move50 = move50;
 }
 
-void position::unmake_move(const move& m)
-{
+void position::unmake_move(const move& m) {
   hash_ ^= hash_color;
   side_to_play = ~side_to_play;
   const color c = side_to_play;
-  switch (const move_flags type = m.flags())
-  {
+  switch (const move_flags type = m.flags()) {
   case quiet:
     move_piece_quiet(m.to(), m.from());
     break;
@@ -201,25 +180,21 @@ void position::unmake_move(const move& m)
     move_piece_quiet(m.to(), m.from());
     break;
   case oo:
-    if (c == white)
-    {
+    if (c == white) {
       move_piece_quiet(g1, e1);
       move_piece_quiet(f1, h1);
     }
-    else
-    {
+    else {
       move_piece_quiet(g8, e8);
       move_piece_quiet(f8, h8);
     }
     break;
   case ooo:
-    if (c == white)
-    {
+    if (c == white) {
       move_piece_quiet(c1, e1);
       move_piece_quiet(d1, a1);
     }
-    else
-    {
+    else {
       move_piece_quiet(c8, e8);
       move_piece_quiet(d8, a8);
     }
@@ -253,12 +228,10 @@ void position::unmake_move(const move& m)
   move50 = history[history_index].move50;
 }
 
-void position::set_fen(const std::string& fen)
-{
+void position::set_fen(const std::string& fen) {
   clear();
   int sq = a8;
-  for (const char ch : fen.substr(0, fen.find(' ')))
-  {
+  for (const char ch : fen.substr(0, fen.find(' '))) {
     if (isdigit(ch))
       sq += (ch - '0') * east;
     else if (ch == '/')
@@ -274,10 +247,8 @@ void position::set_fen(const std::string& fen)
   side_to_play = token == 'w' ? white : black;
 
   history[history_index].entry = all_castling_mask;
-  while (ss >> token && !isspace(token))
-  {
-    switch (token)
-    {
+  while (ss >> token && !isspace(token)) {
+    switch (token) {
     case 'K':
       history[history_index].entry &= ~white_oo_mask;
       break;
@@ -296,18 +267,14 @@ void position::set_fen(const std::string& fen)
   is_in_check = in_check();
 }
 
-std::string position::get_fen() const
-{
+std::string position::get_fen() const {
   std::ostringstream fen;
 
-  for (int i = 56; i >= 0; i -= 8)
-  {
+  for (int i = 56; i >= 0; i -= 8) {
     int empty = 0;
-    for (int j = 0; j < 8; j++)
-    {
+    for (int j = 0; j < 8; j++) {
       if (const piece p = board[i + j]; p == no_piece) empty++;
-      else
-      {
+      else {
         fen << (empty == 0 ? "" : std::to_string(empty))
           << piece_str[p];
         empty = 0;
@@ -329,8 +296,7 @@ std::string position::get_fen() const
   return fen.str();
 }
 
-void position::move_piece(const square from, const square to)
-{
+void position::move_piece(const square from, const square to) {
   hash_ ^= zobrist_table[board[from]][from] ^ zobrist_table[board[from]][to]
     ^ zobrist_table[board[to]][to];
   const uint64_t mask = square_bb[from] | square_bb[to];
@@ -340,16 +306,14 @@ void position::move_piece(const square from, const square to)
   board[from] = no_piece;
 }
 
-void position::move_piece_quiet(const square from, const square to)
-{
+void position::move_piece_quiet(const square from, const square to) {
   hash_ ^= zobrist_table[board[from]][from] ^ zobrist_table[board[from]][to];
   piece_bb[board[from]] ^= square_bb[from] | square_bb[to];
   board[to] = board[from];
   board[from] = no_piece;
 }
 
-move* position::generate_moves(color us, move* list, bool quietmove)
-{
+move* position::generate_moves(color us, move* list, bool quietmove) {
   color them = ~us;
 
   const uint64_t us_bb = all_pieces(us);
@@ -397,8 +361,7 @@ move* position::generate_moves(color us, move* list, bool quietmove)
     | (attacks<bishop>(our_king, them_bb) & their_diag_sliders);
 
   pinned = 0;
-  while (candidates)
-  {
+  while (candidates) {
     s = pop_lsb(&candidates);
     b1 = squares_between_bb[our_king][s] & us_bb;
 
@@ -408,49 +371,42 @@ move* position::generate_moves(color us, move* list, bool quietmove)
 
   const uint64_t not_pinned = ~pinned;
 
-  switch (sparse_popcnt(checkers))
-  {
+  switch (sparse_popcnt(checkers)) {
   case 2:
     return list;
-  case 1:
-    {
-      square checker_square = lsb(checkers);
-      piece piece = board[checker_square];
-      piece_type pt = type_of(piece);
-      color pc = color_of(piece);
-      if (pc == them && pt == pawn)
-      {
-        if (checkers == shift(relative_dir(us, south), square_bb[history[history_index].epsq]))
-        {
-          b1 = pawnattacks(them, history[history_index].epsq) & bitboard_of(us, pawn) & not_pinned;
-          while (b1) *list++ = move(pop_lsb(&b1), history[history_index].epsq, en_passant);
-        }
+  case 1: {
+    square checker_square = lsb(checkers);
+    piece piece = board[checker_square];
+    piece_type pt = type_of(piece);
+    color pc = color_of(piece);
+    if (pc == them && pt == pawn) {
+      if (checkers == shift(relative_dir(us, south), square_bb[history[history_index].epsq])) {
+        b1 = pawnattacks(them, history[history_index].epsq) & bitboard_of(us, pawn) & not_pinned;
+        while (b1) *list++ = move(pop_lsb(&b1), history[history_index].epsq, en_passant);
       }
-      if (pc == them && pt == knight)
-      {
-        b1 = attackers_from(us, checker_square, all) & not_pinned;
-        while (b1) *list++ = move(pop_lsb(&b1), checker_square, capture);
-
-        return list;
-      }
-      capture_mask = checkers;
-
-      quiet_mask = squares_between_bb[our_king][checker_square];
-
-      break;
     }
+    if (pc == them && pt == knight) {
+      b1 = attackers_from(us, checker_square, all) & not_pinned;
+      while (b1) *list++ = move(pop_lsb(&b1), checker_square, capture);
+
+      return list;
+    }
+    capture_mask = checkers;
+
+    quiet_mask = squares_between_bb[our_king][checker_square];
+
+    break;
+  }
 
   default:
     capture_mask = them_bb;
 
     quiet_mask = ~all;
 
-    if (history[history_index].epsq != no_square)
-    {
+    if (history[history_index].epsq != no_square) {
       b2 = pawnattacks(them, history[history_index].epsq) & bitboard_of(us, pawn);
       b1 = b2 & not_pinned;
-      while (b1)
-      {
+      while (b1) {
         s = pop_lsb(&b1);
 
         if ((sliding_attacks(our_king, all ^ square_bb[s]
@@ -461,16 +417,13 @@ move* position::generate_moves(color us, move* list, bool quietmove)
       }
 
       b1 = b2 & pinned & line[history[history_index].epsq][our_king];
-      if (b1)
-      {
+      if (b1) {
         *list++ = move(lsb(b1), history[history_index].epsq, en_passant);
       }
     }
 
-    if (quietmove)
-    {
-      if (!((history[history_index].entry & oo_mask(us)) | ((all | danger) & oo_blockers_mask(us))))
-      {
+    if (quietmove) {
+      if (!((history[history_index].entry & oo_mask(us)) | ((all | danger) & oo_blockers_mask(us)))) {
         *list++ = us == white ? move(e1, g1, oo) : move(e8, g8, oo);
       }
       if (!((history[history_index].entry & ooo_mask(us)) |
@@ -478,8 +431,7 @@ move* position::generate_moves(color us, move* list, bool quietmove)
         *list++ = us == white ? move(e1, c1, ooo) : move(e8, c8, ooo);
     }
     b1 = ~(not_pinned | bitboard_of(us, knight));
-    while (b1)
-    {
+    while (b1) {
       s = pop_lsb(&b1);
 
       b2 = attacks(type_of(board[s]), s, all) & line[our_king][s];
@@ -489,21 +441,17 @@ move* position::generate_moves(color us, move* list, bool quietmove)
     }
 
     b1 = ~not_pinned & bitboard_of(us, pawn);
-    while (b1)
-    {
+    while (b1) {
       s = pop_lsb(&b1);
 
-      if (rank_of(s) == relative_rank(us, rank_7))
-      {
+      if (rank_of(s) == relative_rank(us, rank_7)) {
         b2 = pawnattacks(us, s) & capture_mask & line[our_king][s];
         list = make<promo_caps>(s, b2, list);
       }
-      else
-      {
+      else {
         b2 = pawnattacks(us, s) & them_bb & line[s][our_king];
         list = make<capture>(s, b2, list);
-        if (quietmove)
-        {
+        if (quietmove) {
           b2 = shift(relative_dir(us, north), square_bb[s]) & ~all & line[our_king][s];
           b3 = shift(relative_dir(us, north), b2 &
                      mask_rank[relative_rank(us, rank_3)]) & ~all & line[our_king][s];
@@ -517,8 +465,7 @@ move* position::generate_moves(color us, move* list, bool quietmove)
   }
 
   b1 = bitboard_of(us, knight) & not_pinned;
-  while (b1)
-  {
+  while (b1) {
     s = pop_lsb(&b1);
     b2 = attacks<knight>(s, all);
     if (quietmove)
@@ -527,8 +474,7 @@ move* position::generate_moves(color us, move* list, bool quietmove)
   }
 
   b1 = our_diag_sliders & not_pinned;
-  while (b1)
-  {
+  while (b1) {
     s = pop_lsb(&b1);
     b2 = attacks<bishop>(s, all);
     if (quietmove)
@@ -537,8 +483,7 @@ move* position::generate_moves(color us, move* list, bool quietmove)
   }
 
   b1 = our_orth_sliders & not_pinned;
-  while (b1)
-  {
+  while (b1) {
     s = pop_lsb(&b1);
     b2 = attacks<rook>(s, all);
     if (quietmove)
@@ -548,22 +493,19 @@ move* position::generate_moves(color us, move* list, bool quietmove)
 
   b1 = bitboard_of(us, pawn) & not_pinned & ~mask_rank[relative_rank(us, rank_7)];
 
-  if (quietmove)
-  {
+  if (quietmove) {
     b2 = shift(relative_dir(us, north), b1) & ~all;
 
     b3 = shift(relative_dir(us, north), b2 & mask_rank[relative_rank(us, rank_3)]) & quiet_mask;
 
     b2 &= quiet_mask;
 
-    while (b2)
-    {
+    while (b2) {
       s = pop_lsb(&b2);
       *list++ = move(s - relative_dir(us, north), s, quiet);
     }
 
-    while (b3)
-    {
+    while (b3) {
       s = pop_lsb(&b3);
       *list++ = move(s - relative_dir(us, northnorth), s, double_push);
     }
@@ -571,24 +513,20 @@ move* position::generate_moves(color us, move* list, bool quietmove)
   b2 = shift(relative_dir(us, northwest), b1) & capture_mask;
   b3 = shift(relative_dir(us, northeast), b1) & capture_mask;
 
-  while (b2)
-  {
+  while (b2) {
     s = pop_lsb(&b2);
     *list++ = move(s - relative_dir(us, northwest), s, capture);
   }
 
-  while (b3)
-  {
+  while (b3) {
     s = pop_lsb(&b3);
     *list++ = move(s - relative_dir(us, northeast), s, capture);
   }
 
   b1 = bitboard_of(us, pawn) & not_pinned & mask_rank[relative_rank(us, rank_7)];
-  if (b1)
-  {
+  if (b1) {
     b2 = shift(relative_dir(us, north), b1) & quiet_mask;
-    while (b2)
-    {
+    while (b2) {
       s = pop_lsb(&b2);
       *list++ = move(s - relative_dir(us, north), s, promo_knight);
       *list++ = move(s - relative_dir(us, north), s, promo_bishop);
@@ -599,8 +537,7 @@ move* position::generate_moves(color us, move* list, bool quietmove)
     b2 = shift(relative_dir(us, northwest), b1) & capture_mask;
     b3 = shift(relative_dir(us, northeast), b1) & capture_mask;
 
-    while (b2)
-    {
+    while (b2) {
       s = pop_lsb(&b2);
       *list++ = move(s - relative_dir(us, northwest), s, promo_cap_knight);
       *list++ = move(s - relative_dir(us, northwest), s, promo_cap_bishop);
@@ -608,8 +545,7 @@ move* position::generate_moves(color us, move* list, bool quietmove)
       *list++ = move(s - relative_dir(us, northwest), s, promo_cap_queen);
     }
 
-    while (b3)
-    {
+    while (b3) {
       s = pop_lsb(&b3);
       *list++ = move(s - relative_dir(us, northeast), s, promo_cap_knight);
       *list++ = move(s - relative_dir(us, northeast), s, promo_cap_bishop);

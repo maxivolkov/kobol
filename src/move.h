@@ -1,34 +1,27 @@
 #pragma once
 #include "main.h"
 
-class move
-{
+class move {
 public:
   uint16_t mv;
 
-  move() : mv(0)
-  {
-  }
+  move() : mv(0) {}
 
   move(const uint16_t m) { mv = m; }
 
-  move(const square from, const square to) : mv(0)
-  {
+  move(const square from, const square to) : mv(0) {
     mv = static_cast<uint16_t>(from << 6 | to);
   }
 
-  move(const square from, const square to, const move_flags flags) : mv(0)
-  {
+  move(const square from, const square to, const move_flags flags) : mv(0) {
     mv = static_cast<uint16_t>(flags << 12 | from << 6 | to);
   }
 
-  move(const std::string& mv)
-  {
+  move(const std::string& mv) {
     const square fr = create_square(static_cast<file>(mv[0] - 'a'), static_cast<rank>(mv[1] - '1'));
     const square to = create_square(static_cast<file>(mv[2] - 'a'), static_cast<rank>(mv[3] - '1'));
     move_flags mf = quiet;
-    if (mv.length() > 4)
-    {
+    if (mv.length() > 4) {
       if (mv[5] == 'q')
         mf = promo_cap_queen;
       else if (mv[5] == 'r')
@@ -46,13 +39,11 @@ public:
   [[nodiscard]] int to_from() const { return mv & 0xffff; }
   [[nodiscard]] move_flags flags() const { return static_cast<move_flags>(mv >> 12 & 0xf); }
 
-  [[nodiscard]] bool is_capture() const
-  {
+  [[nodiscard]] bool is_capture() const {
     return mv >> 12 & capture;
   }
 
-  [[nodiscard]] std::string to_uci() const
-  {
+  [[nodiscard]] std::string to_uci() const {
     std::string uci = sqstr[from()] + sqstr[to()];
     if (flags() & promo)
       return uci + move_typestr_uci[flags() & 7];
@@ -64,8 +55,7 @@ public:
 };
 
 template <move_flags F = quiet>
-move* make(const square from, uint64_t to, move* list)
-{
+move* make(const square from, uint64_t to, move* list) {
   while (to) *list++ = move(from, pop_lsb(&to), F);
   return list;
 }
