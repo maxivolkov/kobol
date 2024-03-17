@@ -166,7 +166,8 @@ inline const std::string move_typestr_uci[8] = {
 };
 
 inline const char* move_typestr[16] = {
-  "", "", " O-O", " O-O-O", "N", "B", "R", "Q", " (capture)", "", " e.p.", "", "N", "B", "R", "Q"
+  "", "", " O-O", " O-O-O", "N", "B", "R", "Q",
+  " (capture)", "", " e.p.", "", "N", "B", "R", "Q"
 };
 
 #if defined(_MSC_VER)
