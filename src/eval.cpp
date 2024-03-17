@@ -45,10 +45,10 @@ int32_t eval(const move& m, const bool q) {
 }
 
 int32_t eval() {
-  int32_t scoreW = 0;
-  int32_t scoreB = 0;
-  int pieceW[6] = {};
-  int pieceB[6] = {};
+  int32_t score_w = 0;
+  int32_t score_b = 0;
+  int piece_w[6] = {};
+  int piece_b[6] = {};
   for (int s = 0; s < 64; s++) {
     const piece p = pos.board[s];
     if (p == no_piece)
@@ -57,26 +57,26 @@ int32_t eval() {
     const int rank = type_of(p);
     const int32_t val = pst_pos[pos.phase][col][rank][s];
     if (col == 0) {
-      scoreW += val;
-      pieceW[rank]++;
+      score_w += val;
+      piece_w[rank]++;
     }
     else {
-      scoreB += val;
-      pieceB[rank]++;
+      score_b += val;
+      piece_b[rank]++;
     }
   }
 
-  bool insufficientW = !pieceW[0] && !pieceW[3] && !pieceW[4];
-  bool insufficientB = !pieceB[0] && !pieceB[3] && !pieceB[4];
-  if (insufficientW)
-    insufficientW = pieceW[1] + pieceW[2] * 2 < 3;
-  if (insufficientB)
-    insufficientB = pieceB[1] + pieceB[2] * 2 < 3;
-  if (insufficientW && insufficientB)
+  bool insufficient_w = !piece_w[0] && !piece_w[3] && !piece_w[4];
+  bool insufficient_b = !piece_b[0] && !piece_b[3] && !piece_b[4];
+  if (insufficient_w)
+    insufficient_w = piece_w[1] + piece_w[2] * 2 < 3;
+  if (insufficient_b)
+    insufficient_b = piece_b[1] + piece_b[2] * 2 < 3;
+  if (insufficient_w && insufficient_b)
     return 0;
-  if (insufficientW)
-    scoreB <<= 1;
-  if (insufficientB)
-    scoreW <<= 1;
-  return pos.color_us() == white ? scoreW - scoreB : scoreB - scoreW;
+  if (insufficient_w)
+    score_b <<= 1;
+  if (insufficient_b)
+    score_w <<= 1;
+  return pos.color_us() == white ? score_w - score_b : score_b - score_w;
 }
