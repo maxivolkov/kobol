@@ -1,4 +1,5 @@
 #pragma once
+#include <cstring>
 #include "uci.h"
 
 enum entry_type :uint8_t {

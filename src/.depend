@@ -1,0 +1,16 @@
+bitboard.o: bitboard.cpp main.h bitboard.h
+eval.o: eval.cpp eval.h move.h main.h position.h bitboard.h zobrist.h
+input.o: input.cpp input.h
+main.o: main.cpp bitboard.h main.h eval.h move.h position.h zobrist.h \
+ input.h uci.h search.h util.h
+move.o: move.cpp main.h move.h
+movepick.o: movepick.cpp eval.h move.h main.h position.h bitboard.h \
+ zobrist.h search.h movepick.h
+position.o: position.cpp bitboard.h main.h move.h position.h zobrist.h
+search.o: search.cpp eval.h move.h main.h position.h bitboard.h zobrist.h \
+ hash.h uci.h search.h input.h movepick.h timeman.h
+timeman.o: timeman.cpp input.h search.h move.h main.h uci.h timeman.h
+uci.o: uci.cpp eval.h move.h main.h position.h bitboard.h zobrist.h \
+ hash.h uci.h search.h timeman.h util.h
+util.o: util.cpp util.h
+zobrist.o: zobrist.cpp position.h bitboard.h main.h move.h zobrist.h

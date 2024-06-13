@@ -189,7 +189,7 @@ uint64_t get_bishop_attacks_for_init(square sq, uint64_t occ);
 uint64_t get_rook_attacks(square sq, uint64_t occ);
 
 inline uint64_t reverse(uint64_t b);
-inline uint64_t sliding_attacks(square sq, uint64_t occ, uint64_t mask);
+uint64_t sliding_attacks(square sq, uint64_t occ, uint64_t mask);
 inline uint64_t get_rook_attacks_for_init(square sq, uint64_t occ);
 inline void init_rook_attacks();
 inline uint64_t get_xray_rook_attacks(square sq, uint64_t occ, uint64_t blockers);
@@ -228,7 +228,7 @@ constexpr uint64_t pawnattacks(const color c, const uint64_t p) {
   return c == white ? shift(northwest, p) | shift(northeast, p) : shift(southwest, p) | shift(southeast, p);
 }
 
-constexpr uint64_t pawnattacks(const color c, const square s) {
+inline uint64_t pawnattacks(const color c, const square s) {
   return pawn_attacks[c][s];
 }
 
