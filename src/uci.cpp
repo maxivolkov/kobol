@@ -96,7 +96,7 @@ void uci_command(std::string str) {
     return;
 
   if (const std::string command = split[0]; command == "uci") {
-    std::cout << "id name kobol\n";
+    std::cout << "id name kobol 1.1\n";
     std::cout << "id author maksim\n";
     std::cout << "option name Hash type spin default " << options.hash << " min 64 max 65536\n";
     std::cout << "option name Contempt type spin default " << options.contempt << " min -50 max 50\n";

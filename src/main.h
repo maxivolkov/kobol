@@ -2,6 +2,11 @@
 #include <cstdint>
 #include <string>
 
+#ifdef _MSC_VER
+#else
+#pragma GCC diagnostic ignored "-Wdeprecated-enum-enum-conversion"
+#endif
+
 enum square : int {
   a1, b1, c1, d1, e1, f1, g1, h1,
   a2, b2, c2, d2, e2, f2, g2, h2,
@@ -176,7 +181,7 @@ inline int popcnt(const uint64_t b) { return std::popcount(b); }
 inline square lsb(const uint64_t b) { return static_cast<square>(std::countr_zero(b)); }
 #elif defined(__GNUC__)
 inline int popcnt(const uint64_t b) { return __builtin_popcountll(b); }
-inline Square lsb(const uint64_t b) { return static_cast<Square>(__builtin_ctzll(b)); }
+inline square lsb(const uint64_t b) { return static_cast<square>(__builtin_ctzll(b)); }
 #endif
 
 inline square sparse_popcnt(uint64_t b) {

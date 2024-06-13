@@ -4,7 +4,7 @@
 #include "util.h"
 
 void engine_info() {
-  std::cout << "kobol 1.0" << std::endl;
+  std::cout << "kobol 1.1" << std::endl;
 }
 
 std::string trim(const std::string& s) {

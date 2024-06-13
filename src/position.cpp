@@ -261,7 +261,7 @@ void position::set_fen(const std::string& fen) {
     case 'q':
       history[history_index].entry &= ~black_ooo_mask;
       break;
-    default: ;
+    default:;
     }
   }
   is_in_check = in_check();
@@ -410,8 +410,8 @@ move* position::generate_moves(color us, move* list, bool quietmove) {
         s = pop_lsb(&b1);
 
         if ((sliding_attacks(our_king, all ^ square_bb[s]
-                             ^ shift(relative_dir(us, south), square_bb[history[history_index].epsq]),
-                             mask_rank[rank_of(our_king)]) &
+          ^ shift(relative_dir(us, south), square_bb[history[history_index].epsq]),
+          mask_rank[rank_of(our_king)]) &
           their_orth_sliders) == 0)
           *list++ = move(s, history[history_index].epsq, en_passant);
       }
@@ -454,7 +454,7 @@ move* position::generate_moves(color us, move* list, bool quietmove) {
         if (quietmove) {
           b2 = shift(relative_dir(us, north), square_bb[s]) & ~all & line[our_king][s];
           b3 = shift(relative_dir(us, north), b2 &
-                     mask_rank[relative_rank(us, rank_3)]) & ~all & line[our_king][s];
+            mask_rank[relative_rank(us, rank_3)]) & ~all & line[our_king][s];
           list = make<quiet>(s, b2, list);
           list = make<double_push>(s, b3, list);
         }
