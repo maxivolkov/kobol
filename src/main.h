@@ -2,11 +2,6 @@
 #include <cstdint>
 #include <string>
 
-#ifdef _MSC_VER
-#else
-#pragma GCC diagnostic ignored "-Wdeprecated-enum-enum-conversion"
-#endif
-
 enum square : int {
   a1, b1, c1, d1, e1, f1, g1, h1,
   a2, b2, c2, d2, e2, f2, g2, h2,
@@ -19,7 +14,7 @@ enum square : int {
   no_square
 };
 
-enum color : int {
+enum side : int {
   white,
   black
 };
@@ -71,7 +66,7 @@ enum rank : int {
   rank_8
 };
 
-enum move_flags : int {
+enum move_flag : int {
   quiet = 0b0000,
   double_push = 0b0001,
   oo = 0b0010,
@@ -108,15 +103,16 @@ constexpr size_t nsquares = 64;
 constexpr size_t ncolors = 2;
 constexpr size_t ndirs = 8;
 constexpr size_t npiece_types = 6;
-const std::string piece_str = "PNBRQK~>pnbrqk.";
-const std::string start_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
 constexpr size_t npieces = 15;
 
-constexpr color operator~(const color c) {
-  return static_cast<color>(c ^ black);
+const std::string piece_str = "PNBRQK~>pnbrqk.";
+const std::string start_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
+
+constexpr side operator~(const side c) {
+  return static_cast<side>(c ^ black);
 }
 
-constexpr piece make_piece(const color c, const piece_type pt) {
+constexpr piece make_piece(const side c, const piece_type pt) {
   return static_cast<piece>((c << 3) + pt);
 }
 
@@ -124,8 +120,8 @@ constexpr piece_type type_of(const piece pc) {
   return static_cast<piece_type>(pc & 0b111);
 }
 
-constexpr color color_of(const piece pc) {
-  return static_cast<color>((pc & 0b1000) >> 3);
+constexpr side color_of(const piece pc) {
+  return static_cast<side>((pc & 0b1000) >> 3);
 }
 
 constexpr square operator+(const square s, const direction d) {
@@ -136,25 +132,47 @@ constexpr square operator-(const square s, const direction d) {
   return static_cast<square>(static_cast<int>(s) - static_cast<int>(d));
 }
 
-inline square& operator+=(square& s, const direction d) { return s = s + d; }
-inline square& operator-=(square& s, const direction d) { return s = s - d; }
-inline square& operator++(square& s) { return s = static_cast<square>(static_cast<int>(s) + 1); }
+inline square& operator+=(square& s, const direction d) {
+  return s = s + d;
+}
 
-constexpr rank rank_of(const square s) { return static_cast<rank>(s >> 3); }
-constexpr file file_of(const square s) { return static_cast<file>(s & 0b111); }
-constexpr int diagonal_of(const square s) { return 7 + rank_of(s) - file_of(s); }
-constexpr int anti_diagonal_of(const square s) { return rank_of(s) + file_of(s); }
-constexpr square create_square(const file f, const rank r) { return static_cast<square>(r << 3 | f); }
+inline square& operator-=(square& s, const direction d) {
+  return s = s - d;
+}
 
-constexpr rank relative_rank(const color c, const rank r) {
+inline square& operator++(square& s) {
+  return s = static_cast<square>(static_cast<int>(s) + 1);
+}
+
+constexpr rank rank_of(const square s) {
+  return static_cast<rank>(s >> 3);
+}
+
+constexpr file file_of(const square s) {
+  return static_cast<file>(s & 0b111);
+}
+
+constexpr int diagonal_of(const square s) {
+  return 7 + rank_of(s) - file_of(s);
+}
+
+constexpr int anti_diagonal_of(const square s) {
+  return static_cast<int>(rank_of(s)) + static_cast<int>(file_of(s));
+}
+
+constexpr square create_square(const file f, const rank r) {
+  return static_cast<square>(r << 3 | f);
+}
+
+constexpr rank relative_rank(const side c, const rank r) {
   return c == white ? r : static_cast<rank>(rank_8 - r);
 }
 
-constexpr direction relative_dir(const color c, direction d) {
+constexpr direction relative_dir(const side c, direction d) {
   return static_cast<direction>(c == white ? d : -d);
 }
 
-inline const std::string sqstr[65] = {
+inline const std::string sq_str[65] = {
   "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1",
   "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
   "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3",
@@ -177,8 +195,14 @@ inline const char* move_typestr[16] = {
 
 #if defined(_MSC_VER)
 #include <bit>
-inline int popcnt(const uint64_t b) { return std::popcount(b); }
-inline square lsb(const uint64_t b) { return static_cast<square>(std::countr_zero(b)); }
+
+inline int popcnt(const uint64_t b) {
+  return std::popcount(b);
+}
+
+inline square lsb(const uint64_t b) {
+  return static_cast<square>(std::countr_zero(b));
+}
 #elif defined(__GNUC__)
 inline int popcnt(const uint64_t b) { return __builtin_popcountll(b); }
 inline square lsb(const uint64_t b) { return static_cast<square>(__builtin_ctzll(b)); }
