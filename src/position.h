@@ -1,10 +1,9 @@
 #pragma once
-
 #include <string>
 #include "bitboard.h"
+#include "main.h"
 #include "move.h"
 #include "zobrist.h"
-#include "main.h"
 
 struct undo_info {
   bool in_check;
@@ -24,7 +23,7 @@ class position {
   uint64_t hash_;
 
 public:
-  color side_to_play;
+  side side_to_play;
   bool is_in_check = false;
   int move50{};
   int history_index;
@@ -37,7 +36,7 @@ public:
   uint64_t pinned;
 
   position() : hash_(0), side_to_play(white), history_index(0), board{},
-               piece_bb{0}, checkers(0), pinned(0) {
+    piece_bb{ 0 }, checkers(0), pinned(0) {
     for (auto& i : board) i = no_piece;
     history[0] = undo_info();
   }
@@ -78,24 +77,22 @@ public:
   bool operator==(const position& other) const { return hash_ == other.hash_; }
 
   [[nodiscard]] uint64_t bitboard_of(const piece pc) const { return piece_bb[pc]; }
-  [[nodiscard]] uint64_t bitboard_of(const color c, const piece_type pt) const { return piece_bb[make_piece(c, pt)]; }
+  [[nodiscard]] uint64_t bitboard_of(const side c, const piece_type pt) const { return piece_bb[make_piece(c, pt)]; }
 
   [[nodiscard]] uint64_t all_pieces() const {
-    return
-      piece_bb[white_pawn] | piece_bb[white_knight] | piece_bb[white_bishop] | piece_bb[white_rook] | piece_bb[
-        white_queen] | piece_bb[white_king] |
-      piece_bb[black_pawn] | piece_bb[black_knight] | piece_bb[black_bishop] | piece_bb[black_rook] | piece_bb[
-        black_queen] | piece_bb[black_king];
+    return piece_bb[white_pawn] | piece_bb[white_knight] | piece_bb[white_bishop] | piece_bb[white_rook]
+      | piece_bb[white_queen] | piece_bb[white_king] | piece_bb[black_pawn] | piece_bb[black_knight]
+      | piece_bb[black_bishop] | piece_bb[black_rook] | piece_bb[black_queen] | piece_bb[black_king];
   }
 
   [[nodiscard]] piece at(const square sq) const { return board[sq]; }
-  [[nodiscard]] color color_us() const { return side_to_play; }
-  [[nodiscard]] color color_en() const { return ~side_to_play; }
-  void move_list(color color, move* list, int& count);
-  void move_list_q(color color, move* list, int& count);
+  [[nodiscard]] side us() const { return side_to_play; }
+  [[nodiscard]] side them() const { return ~side_to_play; }
+  void move_list(side color, move* list, int& count);
+  void move_list_q(side color, move* list, int& count);
   void move_list(move* list, int& count);
   void move_list_q(move* list, int& count);
-  [[nodiscard]] bool in_check(color color) const;
+  [[nodiscard]] bool in_check(side color) const;
   [[nodiscard]] bool in_check() const;
   bool is_legal(const move& mv);
 
@@ -117,71 +114,71 @@ public:
   [[nodiscard]] int ply() const { return history_index; }
   [[nodiscard]] uint64_t get_hash() const { return hash_; }
 
-  [[nodiscard]] inline uint64_t diagonal_sliders(color c) const;
-  [[nodiscard]] inline uint64_t orthogonal_sliders(color c) const;
-  [[nodiscard]] inline uint64_t all_pieces(color c) const;
-  [[nodiscard]] inline uint64_t attackers_from(color c, square s, uint64_t occ) const;
+  [[nodiscard]] inline uint64_t diagonal_sliders(side c) const;
+  [[nodiscard]] inline uint64_t orthogonal_sliders(side c) const;
+  [[nodiscard]] inline uint64_t all_pieces(side c) const;
+  [[nodiscard]] inline uint64_t attackers_from(side c, square s, uint64_t occ) const;
   [[nodiscard]] inline uint64_t attackers(square s) const;
   void make_null();
   void unmake_null();
   void make_move(const move& m);
   void unmake_move(const move& m);
   [[nodiscard]] inline bool not_only_pawns() const;
-  move* generate_moves(color us, move* list, bool quietmove = true);
+  move* generate_moves(side us, move* list, bool quietmove = true);
 };
 
-inline uint64_t position::diagonal_sliders(const color c) const {
+inline uint64_t position::diagonal_sliders(const side c) const {
   return c == white ? piece_bb[white_bishop] | piece_bb[white_queen] : piece_bb[black_bishop] | piece_bb[black_queen];
 }
 
-inline uint64_t position::orthogonal_sliders(const color c) const {
+inline uint64_t position::orthogonal_sliders(const side c) const {
   return c == white ? piece_bb[white_rook] | piece_bb[white_queen] : piece_bb[black_rook] | piece_bb[black_queen];
 }
 
 inline bool position::not_only_pawns() const {
   return side_to_play == white
-           ? piece_bb[white_knight] || piece_bb[white_bishop] || piece_bb[white_rook] || piece_bb[white_queen]
-           : piece_bb[black_knight] || piece_bb[black_bishop] || piece_bb[black_rook] || piece_bb[black_queen];
+    ? piece_bb[white_knight] || piece_bb[white_bishop] || piece_bb[white_rook] || piece_bb[white_queen]
+    : piece_bb[black_knight] || piece_bb[black_bishop] || piece_bb[black_rook] || piece_bb[black_queen];
 }
 
-inline uint64_t position::all_pieces(const color c) const {
+inline uint64_t position::all_pieces(const side c) const {
   return c == white
-           ? piece_bb[white_pawn] | piece_bb[white_knight] | piece_bb[white_bishop] |
-           piece_bb[white_rook] | piece_bb[white_queen] | piece_bb[white_king]
-           : piece_bb[black_pawn] | piece_bb[black_knight] | piece_bb[black_bishop] |
-           piece_bb[black_rook] | piece_bb[black_queen] | piece_bb[black_king];
+    ? piece_bb[white_pawn] | piece_bb[white_knight] | piece_bb[white_bishop] |
+    piece_bb[white_rook] | piece_bb[white_queen] | piece_bb[white_king]
+    : piece_bb[black_pawn] | piece_bb[black_knight] | piece_bb[black_bishop] |
+    piece_bb[black_rook] | piece_bb[black_queen] | piece_bb[black_king];
 }
 
-inline uint64_t position::attackers_from(const color c, const square s, const uint64_t occ) const {
+inline uint64_t position::attackers_from(const side c, const square s, const uint64_t occ) const {
   return c == white
-           ? (pawnattacks(black, s) & piece_bb[white_pawn]) |
-           (attacks<knight>(s, occ) & piece_bb[white_knight]) |
-           (attacks<bishop>(s, occ) & (piece_bb[white_bishop] | piece_bb[white_queen])) |
-           (attacks<rook>(s, occ) & (piece_bb[white_rook] | piece_bb[white_queen]))
-           : (pawnattacks(white, s) & piece_bb[black_pawn]) |
-           (attacks<knight>(s, occ) & piece_bb[black_knight]) |
-           (attacks<bishop>(s, occ) & (piece_bb[black_bishop] | piece_bb[black_queen])) |
-           (attacks<rook>(s, occ) & (piece_bb[black_rook] | piece_bb[black_queen]));
+    ? (pawnattacks(black, s) & piece_bb[white_pawn]) |
+    (attacks<knight>(s, occ) & piece_bb[white_knight]) |
+    (attacks<bishop>(s, occ) & (piece_bb[white_bishop] | piece_bb[white_queen])) |
+    (attacks<rook>(s, occ) & (piece_bb[white_rook] | piece_bb[white_queen]))
+    : (pawnattacks(white, s) & piece_bb[black_pawn]) |
+    (attacks<knight>(s, occ) & piece_bb[black_knight]) |
+    (attacks<bishop>(s, occ) & (piece_bb[black_bishop] | piece_bb[black_queen])) |
+    (attacks<rook>(s, occ) & (piece_bb[black_rook] | piece_bb[black_queen]));
 }
 
 inline uint64_t position::attackers(const square s) const {
   const uint64_t occ = all_pieces();
   return side_to_play == black
-           ? (pawnattacks(black, s) & piece_bb[white_pawn]) |
-           (attacks<knight>(s, occ) & piece_bb[white_knight]) |
-           (attacks<bishop>(s, occ) & (piece_bb[white_bishop] | piece_bb[white_queen])) |
-           (attacks<rook>(s, occ) & (piece_bb[white_rook] | piece_bb[white_queen]))
-           : (pawnattacks(white, s) & piece_bb[black_pawn]) |
-           (attacks<knight>(s, occ) & piece_bb[black_knight]) |
-           (attacks<bishop>(s, occ) & (piece_bb[black_bishop] | piece_bb[black_queen])) |
-           (attacks<rook>(s, occ) & (piece_bb[black_rook] | piece_bb[black_queen]));
+    ? (pawnattacks(black, s) & piece_bb[white_pawn]) |
+    (attacks<knight>(s, occ) & piece_bb[white_knight]) |
+    (attacks<bishop>(s, occ) & (piece_bb[white_bishop] | piece_bb[white_queen])) |
+    (attacks<rook>(s, occ) & (piece_bb[white_rook] | piece_bb[white_queen]))
+    : (pawnattacks(white, s) & piece_bb[black_pawn]) |
+    (attacks<knight>(s, occ) & piece_bb[black_knight]) |
+    (attacks<bishop>(s, occ) & (piece_bb[black_bishop] | piece_bb[black_queen])) |
+    (attacks<rook>(s, occ) & (piece_bb[black_rook] | piece_bb[black_queen]));
 }
 
 class move_list {
 public:
-  explicit move_list(position& p, const color color) : last_(p.generate_moves(color, list)) {}
+  explicit move_list(position& p, const side color) : last_(p.generate_moves(color, list)) {}
 
-  explicit move_list(position& p) : last_(p.generate_moves(p.color_us(), list)) {}
+  explicit move_list(position& p) : last_(p.generate_moves(p.us(), list)) {}
 
   [[nodiscard]] const move* begin() const { return list; }
   [[nodiscard]] const move* end() const { return last_; }
