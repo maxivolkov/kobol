@@ -1,10 +1,11 @@
 #include <algorithm>
 #include <iostream>
 #include <ostream>
+#include "uci.h"
 #include "util.h"
 
 void engine_info() {
-  std::cout << "kobol 1.1" << std::endl;
+  std::cout << engine << " " << version << std::endl;
 }
 
 std::string trim(const std::string& s) {
@@ -18,8 +19,7 @@ std::string trim(const std::string& s) {
   auto end = s.end();
   do {
     --end;
-  }
-  while (std::distance(start, end) > 0 && std::isspace(*end));
+  } while (std::distance(start, end) > 0 && std::isspace(*end));
 
   return std::string(start, end + 1);
 }
@@ -41,7 +41,3 @@ std::vector<std::string>& split_string(const std::string& txt, std::vector<std::
   return str;
 }
 
-std::string str_to_lower(std::string s) {
-  std::ranges::transform(s, s.begin(), tolower);
-  return s;
-}
