@@ -22,7 +22,7 @@
 - PST eval
 
 #### Strength
-- approx. 2100 Elo
+- approx. 2200 Elo
   
 #### Options
 - Hash
