@@ -123,26 +123,26 @@ inline constexpr uint64_t mask_anti_diagonal[15] = {
 
 constexpr uint64_t shift(const direction d, const uint64_t b) {
   return d == north
-           ? b << 8
-           : d == south
-           ? b >> 8
-           : d == north + north
-           ? b << 16
-           : d == south + south
-           ? b >> 16
-           : d == east
-           ? (b & ~mask_file[h_file]) << 1
-           : d == west
-           ? (b & ~mask_file[a_file]) >> 1
-           : d == northeast
-           ? (b & ~mask_file[h_file]) << 9
-           : d == northwest
-           ? (b & ~mask_file[a_file]) << 7
-           : d == southeast
-           ? (b & ~mask_file[h_file]) >> 7
-           : d == southwest
-           ? (b & ~mask_file[a_file]) >> 9
-           : 0;
+    ? b << 8
+    : d == south
+    ? b >> 8
+    : d == north + north
+    ? b << 16
+    : d == south + south
+    ? b >> 16
+    : d == east
+    ? (b & ~mask_file[h_file]) << 1
+    : d == west
+    ? (b & ~mask_file[a_file]) >> 1
+    : d == northeast
+    ? (b & ~mask_file[h_file]) << 9
+    : d == northwest
+    ? (b & ~mask_file[a_file]) << 7
+    : d == southeast
+    ? (b & ~mask_file[h_file]) >> 7
+    : d == southwest
+    ? (b & ~mask_file[a_file]) >> 9
+    : 0;
 }
 
 constexpr uint64_t white_oo_mask = 0x90;
@@ -157,18 +157,18 @@ constexpr uint64_t black_ooo_blockers_and_attackers_mask = 0xE00000000000000;
 
 constexpr uint64_t all_castling_mask = 0x9100000000000091;
 
-constexpr uint64_t oo_mask(const color c) { return c == white ? white_oo_mask : black_oo_mask; }
-constexpr uint64_t ooo_mask(const color c) { return c == white ? white_ooo_mask : black_ooo_mask; }
+constexpr uint64_t oo_mask(const side c) { return c == white ? white_oo_mask : black_oo_mask; }
+constexpr uint64_t ooo_mask(const side c) { return c == white ? white_ooo_mask : black_ooo_mask; }
 
-constexpr uint64_t oo_blockers_mask(const color c) {
+constexpr uint64_t oo_blockers_mask(const side c) {
   return c == white ? white_oo_blockers_and_attackers_mask : black_oo_blockers_and_attackers_mask;
 }
 
-constexpr uint64_t ooo_blockers_mask(const color c) {
+constexpr uint64_t ooo_blockers_mask(const side c) {
   return c == white ? white_ooo_blockers_and_attackers_mask : black_ooo_blockers_and_attackers_mask;
 }
 
-constexpr uint64_t ignore_ooo_danger(const color c) { return c == white ? 0x2 : 0x200000000000000; }
+constexpr uint64_t ignore_ooo_danger(const side c) { return c == white ? 0x2 : 0x200000000000000; }
 
 void init_tables();
 inline uint64_t bishop_attack_masks[64];
@@ -199,12 +199,12 @@ inline uint64_t get_xray_bishop_attacks(square sq, uint64_t occ, uint64_t blocke
 template <piece_type P>
 constexpr uint64_t attacks(const square s, const uint64_t occ) {
   return P == rook
-           ? get_rook_attacks(s, occ)
-           : P == bishop
-           ? get_bishop_attacks(s, occ)
-           : P == queen
-           ? attacks<rook>(s, occ) | attacks<bishop>(s, occ)
-           : pseudo_legal_attacks[P][s];
+    ? get_rook_attacks(s, occ)
+    : P == bishop
+    ? get_bishop_attacks(s, occ)
+    : P == queen
+    ? attacks<rook>(s, occ) | attacks<bishop>(s, occ)
+    : pseudo_legal_attacks[P][s];
 }
 
 constexpr uint64_t attacks(const piece_type pt, const square s, const uint64_t occ) {
@@ -224,11 +224,11 @@ constexpr uint64_t attacks(const piece_type pt, const square s, const uint64_t o
   return 0;
 }
 
-constexpr uint64_t pawnattacks(const color c, const uint64_t p) {
+constexpr uint64_t pawnattacks(const side c, const uint64_t p) {
   return c == white ? shift(northwest, p) | shift(northeast, p) : shift(southwest, p) | shift(southeast, p);
 }
 
-inline uint64_t pawnattacks(const color c, const square s) {
+inline uint64_t pawnattacks(const side c, const square s) {
   return pawn_attacks[c][s];
 }
 
