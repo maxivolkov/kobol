@@ -65,18 +65,5 @@ int32_t eval() {
       piece_b[rank]++;
     }
   }
-
-  bool insufficient_w = !piece_w[0] && !piece_w[3] && !piece_w[4];
-  bool insufficient_b = !piece_b[0] && !piece_b[3] && !piece_b[4];
-  if (insufficient_w)
-    insufficient_w = piece_w[1] + piece_w[2] * 2 < 3;
-  if (insufficient_b)
-    insufficient_b = piece_b[1] + piece_b[2] * 2 < 3;
-  if (insufficient_w && insufficient_b)
-    return 0;
-  if (insufficient_w)
-    score_b <<= 1;
-  if (insufficient_b)
-    score_w <<= 1;
-  return pos.color_us() == white ? score_w - score_b : score_b - score_w;
+  return pos.us() == white ? score_w - score_b : score_b - score_w;
 }

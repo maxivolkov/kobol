@@ -1,10 +1,8 @@
 #pragma once
-
 #include "move.h"
 #include "position.h"
 
-inline int32_t pst_mg[6 * 64]
-{
+inline int32_t pst_mg[6 * 64] {
   //PAWN MG
   50, 50, 50, 50, 50, 50, 50, 50,
   88, 107, 73, 97, 94, 107, 66, 38,
@@ -61,8 +59,7 @@ inline int32_t pst_mg[6 * 64]
   -3, 22, 14, -29, 4, -12, 17, 14,
 };
 
-inline int32_t pst_eg[6 * 64]
-{
+inline int32_t pst_eg[6 * 64] {
   //PAWN EG
   50, 50, 50, 50, 50, 50, 50, 50,
   138, 135, 126, 114, 120, 116, 132, 142,
