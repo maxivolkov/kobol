@@ -1,4 +1,5 @@
 #include "eval.h"
+#include "nnue.h"
 #include "position.h"
 
 void init_eval() {
@@ -44,26 +45,84 @@ int32_t eval(const move& m, const bool q) {
   return score + pst_pos[pos.phase][fr_col][fr_rank][to];
 }
 
-int32_t eval() {
-  int32_t score_w = 0;
-  int32_t score_b = 0;
-  int piece_w[6] = {};
-  int piece_b[6] = {};
-  for (int s = 0; s < 64; s++) {
-    const piece p = pos.board[s];
-    if (p == no_piece)
-      continue;
-    const int col = color_of(p);
-    const int rank = type_of(p);
-    const int32_t val = pst_pos[pos.phase][col][rank][s];
-    if (col == 0) {
-      score_w += val;
-      piece_w[rank]++;
+/*
+* Piece codes are
+wking=1, wqueen=2, wrook=3, wbishop= 4, wknight= 5, wpawn= 6,
+bking=7, bqueen=8, brook=9, bbishop=10, bknight=11, bpawn=12,
+
+WHITE_PAWN=0, WHITE_KNIGHT=1, WHITE_BISHOP=2, WHITE_ROOK=3, WHITE_QUEEN=4, WHITE_KING=5,
+BLACK_PAWN = 8, BLACK_KNIGHT=9, BLACK_BISHOP=10, BLACK_ROOK=11, BLACK_QUEEN=12, BLACK_KING=13
+*/
+
+int eval_nnue(const position& pos) {
+  int pieces[33]{};
+  int squares[33]{};
+  int index = 2;
+  for (uint8_t i = 0; i < 64; i++) {
+    if (pos.at(static_cast<square>(i)) == 5) {
+      pieces[0] = 1;
+      squares[0] = i;
     }
-    else {
-      score_b += val;
-      piece_b[rank]++;
+    else if (pos.at(static_cast<square>(i)) == 13) {
+      pieces[1] = 7;
+      squares[1] = i;
+    }
+    else if (pos.at(static_cast<square>(i)) == 0) {
+      pieces[index] = 6;
+      squares[index] = i;
+      index++;
+    }
+    else if (pos.at(static_cast<square>(i)) == 1) {
+      pieces[index] = 5;
+      squares[index] = i;
+      index++;
+    }
+    else if (pos.at(static_cast<square>(i)) == 2) {
+      pieces[index] = 4;
+      squares[index] = i;
+      index++;
+    }
+    else if (pos.at(static_cast<square>(i)) == 3) {
+      pieces[index] = 3;
+      squares[index] = i;
+      index++;
+    }
+    else if (pos.at(static_cast<square>(i)) == 4) {
+      pieces[index] = 2;
+      squares[index] = i;
+      index++;
+    }
+    else if (pos.at(static_cast<square>(i)) == 8) {
+      pieces[index] = 12;
+      squares[index] = i;
+      index++;
+    }
+    else if (pos.at(static_cast<square>(i)) == 9) {
+      pieces[index] = 11;
+      squares[index] = i;
+      index++;
+    }
+    else if (pos.at(static_cast<square>(i)) == 10) {
+      pieces[index] = 10;
+      squares[index] = i;
+      index++;
+    }
+    else if (pos.at(static_cast<square>(i)) == 11) {
+      pieces[index] = 9;
+      squares[index] = i;
+      index++;
+    }
+    else if (pos.at(static_cast<square>(i)) == 12) {
+      pieces[index] = 8;
+      squares[index] = i;
+      index++;
     }
   }
-  return pos.us() == white ? score_w - score_b : score_b - score_w;
+  const int nnue_score = nnue_evaluate(pos.side_to_play, pieces, squares);
+  return nnue_score;
+}
+
+int32_t eval(const position& pos) {
+  const int nnue_score = eval_nnue(pos);
+  return nnue_score;
 }
