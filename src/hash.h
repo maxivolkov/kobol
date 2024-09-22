@@ -1,5 +1,4 @@
 #pragma once
-#include <cstring>
 #include "uci.h"
 
 enum entry_type :uint8_t {
@@ -9,12 +8,12 @@ enum entry_type :uint8_t {
 };
 
 struct entry {
-  uint64_t hash; 
-  uint16_t mv; 
-  int16_t score; 
-  uint8_t depth; 
-  entry_type type;  
-  uint16_t age; 
+  uint64_t hash; //8
+  uint16_t mv; //2
+  int16_t score; //2
+  uint8_t depth; //1
+  entry_type type; //1 
+  uint16_t age; //2
 
   void entry_data(const uint64_t h, const int16_t s, const uint16_t m, const entry_type t, const uint8_t d,
     const uint16_t a) {
