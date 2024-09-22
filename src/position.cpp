@@ -10,33 +10,33 @@ std::ostream& operator<<(std::ostream& os, const position& p) {
       const piece piece = p.board[i + j];
       os << piece_str[piece] << " ";
     }
-    os << std::endl;
+    os << '\n';
   }
-  os << std::endl;
-  os << "FEN " << p.get_fen() << std::endl;
-  os << "Hash 0x" << std::hex << p.hash_ << std::dec << std::endl;
+  os << '\n';
+  os << "FEN " << p.get_fen() << '\n';
+  os << "Hash 0x" << std::hex << p.hash_ << std::dec << '\n';
   os << (p.side_to_play == white ? "White to move" : "Black to move");
   os << std::endl;
   return os;
 }
 
-void position::move_list(const side color, move* list, int& count) {
+void position::move_list(const color color, move* list, int& count) {
   const move* last = generate_moves(color, list);
   count = static_cast<int>(last - list);
 }
 
-void position::move_list_q(const side color, move* list, int& count) {
+void position::move_list_q(const color color, move* list, int& count) {
   const move* last = generate_moves(color, list, false);
   count = static_cast<int>(last - list);
 }
 
 void position::move_list(move* list, int& count) {
-  const move* last = generate_moves(us(), list);
+  const move* last = generate_moves(color_us(), list);
   count = static_cast<int>(last - list);
 }
 
 void position::move_list_q(move* list, int& count) {
-  const move* last = generate_moves(us(), list, false);
+  const move* last = generate_moves(color_us(), list, false);
   count = static_cast<int>(last - list);
 }
 
@@ -50,7 +50,7 @@ bool position::is_legal(const move& mv) {
   return false;
 }
 
-bool position::in_check(const side color) const {
+bool position::in_check(const color color) const {
   return attackers_from(~color, lsb(bitboard_of(color, king)), all_pieces());
 }
 
@@ -74,13 +74,13 @@ void position::unmake_null() {
 
 void position::make_move(const move& m) {
   hash_ ^= hash_color;
-  const side c = side_to_play;
+  const color c = side_to_play;
   side_to_play = ~side_to_play;
   ++history_index;
   history[history_index] = undo_info(history[history_index - 1]);
   const square fr = m.from();
   const square to = m.to();
-  const move_flag type = m.flags();
+  const move_flags type = m.flags();
   history[history_index].entry |= square_bb[to] | square_bb[fr];
   move50 = type == quiet && type_of(board[fr]) != pawn ? ++move50 : 0;
   switch (type) {
@@ -171,8 +171,8 @@ void position::make_move(const move& m) {
 void position::unmake_move(const move& m) {
   hash_ ^= hash_color;
   side_to_play = ~side_to_play;
-  const side c = side_to_play;
-  switch (const move_flag type = m.flags()) {
+  const color c = side_to_play;
+  switch (const move_flags type = m.flags()) {
   case quiet:
     move_piece_quiet(m.to(), m.from());
     break;
@@ -261,7 +261,7 @@ void position::set_fen(const std::string& fen) {
     case 'q':
       history[history_index].entry &= ~black_ooo_mask;
       break;
-    default:;
+    default: ;
     }
   }
   is_in_check = in_check();
@@ -291,7 +291,7 @@ std::string position::get_fen() const {
     << (history[history_index].entry & black_oo_mask ? "" : "k")
     << (history[history_index].entry & black_ooo_mask ? "" : "q")
     << (history[history_index].entry & all_castling_mask ? "- " : "")
-    << (history[history_index].epsq == no_square ? " -" : sq_str[history[history_index].epsq]);
+    << (history[history_index].epsq == no_square ? " -" : sqstr[history[history_index].epsq]);
 
   return fen.str();
 }
@@ -313,8 +313,8 @@ void position::move_piece_quiet(const square from, const square to) {
   board[from] = no_piece;
 }
 
-move* position::generate_moves(side us, move* list, bool quietmove) {
-  side them = ~us;
+move* position::generate_moves(color us, move* list, bool quietmove) {
+  color them = ~us;
 
   const uint64_t us_bb = all_pieces(us);
   const uint64_t them_bb = all_pieces(them);
@@ -349,7 +349,9 @@ move* position::generate_moves(side us, move* list, bool quietmove) {
   list = make<capture>(our_king, b1 & them_bb, list);
 
   uint64_t capture_mask;
+
   uint64_t quiet_mask;
+
   square s;
 
   checkers = (attacks<knight>(our_king, all) & bitboard_of(them, knight))
@@ -376,7 +378,7 @@ move* position::generate_moves(side us, move* list, bool quietmove) {
     square checker_square = lsb(checkers);
     piece piece = board[checker_square];
     piece_type pt = type_of(piece);
-    side pc = color_of(piece);
+    color pc = color_of(piece);
     if (pc == them && pt == pawn) {
       if (checkers == shift(relative_dir(us, south), square_bb[history[history_index].epsq])) {
         b1 = pawnattacks(them, history[history_index].epsq) & bitboard_of(us, pawn) & not_pinned;
@@ -390,12 +392,15 @@ move* position::generate_moves(side us, move* list, bool quietmove) {
       return list;
     }
     capture_mask = checkers;
+
     quiet_mask = squares_between_bb[our_king][checker_square];
+
     break;
   }
 
   default:
     capture_mask = them_bb;
+
     quiet_mask = ~all;
 
     if (history[history_index].epsq != no_square) {
@@ -405,8 +410,8 @@ move* position::generate_moves(side us, move* list, bool quietmove) {
         s = pop_lsb(&b1);
 
         if ((sliding_attacks(our_king, all ^ square_bb[s]
-          ^ shift(relative_dir(us, south), square_bb[history[history_index].epsq]),
-          mask_rank[rank_of(our_king)]) &
+                             ^ shift(relative_dir(us, south), square_bb[history[history_index].epsq]),
+                             mask_rank[rank_of(our_king)]) &
           their_orth_sliders) == 0)
           *list++ = move(s, history[history_index].epsq, en_passant);
       }
@@ -449,12 +454,13 @@ move* position::generate_moves(side us, move* list, bool quietmove) {
         if (quietmove) {
           b2 = shift(relative_dir(us, north), square_bb[s]) & ~all & line[our_king][s];
           b3 = shift(relative_dir(us, north), b2 &
-            mask_rank[relative_rank(us, rank_3)]) & ~all & line[our_king][s];
+                     mask_rank[relative_rank(us, rank_3)]) & ~all & line[our_king][s];
           list = make<quiet>(s, b2, list);
           list = make<double_push>(s, b3, list);
         }
       }
     }
+
     break;
   }
 
@@ -529,6 +535,8 @@ move* position::generate_moves(side us, move* list, bool quietmove) {
     }
 
     b2 = shift(relative_dir(us, northwest), b1) & capture_mask;
+    b3 = shift(relative_dir(us, northeast), b1) & capture_mask;
+
     while (b2) {
       s = pop_lsb(&b2);
       *list++ = move(s - relative_dir(us, northwest), s, promo_cap_knight);
@@ -537,7 +545,6 @@ move* position::generate_moves(side us, move* list, bool quietmove) {
       *list++ = move(s - relative_dir(us, northwest), s, promo_cap_queen);
     }
 
-    b3 = shift(relative_dir(us, northeast), b1) & capture_mask;
     while (b3) {
       s = pop_lsb(&b3);
       *list++ = move(s - relative_dir(us, northeast), s, promo_cap_knight);
@@ -546,5 +553,6 @@ move* position::generate_moves(side us, move* list, bool quietmove) {
       *list++ = move(s - relative_dir(us, northeast), s, promo_cap_queen);
     }
   }
+
   return list;
 }
