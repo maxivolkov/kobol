@@ -5,9 +5,9 @@
 #include "input.h"
 #include "movepick.h"
 #include "position.h"
-#include "search.h"
 #include "timeman.h"
 #include "uci.h"
+#include "search.h"
 
 void extract_pv(std::vector<move>& list) {
   const uint64_t hash = pos.get_hash();
@@ -49,10 +49,10 @@ void info_pv() {
   const uint64_t ms = sd.elapsed();
   const uint64_t nps = ms ? sd.nodes * 1000 / ms : 0;
   const std::string score = sd.bscore > near_checkmate
-    ? "mate " + std::to_string((max_checkmate - sd.bscore) >> 1)
-    : sd.bscore < -near_checkmate
-    ? "mate " + std::to_string((-max_checkmate - sd.bscore + 2) >> 1)
-    : "cp " + std::to_string(sd.bscore);
+                              ? "mate " + std::to_string((max_checkmate - sd.bscore) >> 1)
+                              : sd.bscore < -near_checkmate
+                              ? "mate " + std::to_string((-max_checkmate - sd.bscore + 2) >> 1)
+                              : "cp " + std::to_string(sd.bscore);
   const std::string pv = extract_pv();
   std::cout << "info depth " << sd.depth << " nodes " << sd.nodes << " time " << ms << " nps " << nps << " hashfull " <<
     tt.per_million() << " score " << score << " pv " << pv << std::endl;
@@ -79,12 +79,12 @@ int32_t qsearch(int32_t alpha, const int32_t beta) {
     }
   }
 
-  int32_t score = eval();
+  int32_t score = eval(pos);
   if (score >= beta)
     return beta;
   if (score > alpha)
     alpha = score;
-  const side color = pos.us();
+  const color color = pos.color_us();
   movepick picker;
   pos.move_list_q(color, picker.list, picker.count);
   if (!picker.count)
@@ -120,7 +120,7 @@ int32_t qsearch(int32_t alpha, const int32_t beta) {
 int32_t search(int32_t depth, const int32_t ply, int32_t alpha, int32_t beta, const bool do_null) {
   if (pos.move50 >= 100 || pos.is_repetition())
     return ply & 1 ? -options.contempt : options.contempt;
-  const side color = pos.us();
+  const color color = pos.color_us();
   if (pos.is_in_check)
     depth++;
   if (depth < 1)
@@ -136,7 +136,7 @@ int32_t search(int32_t depth, const int32_t ply, int32_t alpha, int32_t beta, co
   if (beta > mate_value - 1) beta = mate_value - 1;
   if (alpha >= beta) return alpha;
 
-  auto static_eval = static_cast<int16_t>(eval());
+  auto static_eval = static_cast<int16_t>(eval(pos));
   movepick picker;
   pos.move_list(color, picker.list, picker.count);
   picker.fill();
@@ -165,7 +165,7 @@ int32_t search(int32_t depth, const int32_t ply, int32_t alpha, int32_t beta, co
 
   if (!pos.is_in_check && alpha == beta - 1) {
     if (depth < 5) {
-      if (const int margins[] = { 0, 50, 100, 200, 300 }; static_eval - margins[depth] >= beta) {
+      if (const int margins[] = {0, 50, 100, 200, 300}; static_eval - margins[depth] >= beta) {
         return beta;
       }
       if (depth > 2 && static_eval >= beta && do_null && pos.not_only_pawns()) {
@@ -271,7 +271,7 @@ void search_iterate() {
   sd.restart();
   tt.age++;
   movepick picker;
-  pos.move_list(pos.us(), picker.list, picker.count);
+  pos.move_list(pos.color_us(), picker.list, picker.count);
 
   if (!picker.count)
     return;

@@ -1,5 +1,7 @@
 #pragma once
+
 #include <chrono>
+
 #include "move.h"
 
 constexpr auto max_depth = 100;
@@ -32,10 +34,11 @@ struct search_driver {
   [[nodiscard]] uint64_t elapsed() const {
     const std::chrono::steady_clock::time_point time_now = std::chrono::steady_clock::now();
     const std::chrono::milliseconds duration = std::chrono::duration_cast<std::chrono::milliseconds>
-      (time_now - time_start);
+	  (time_now - time_start);
     return duration.count();
   }
 };
 
 inline search_driver sd;
+
 void search_iterate();
