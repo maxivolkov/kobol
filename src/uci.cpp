@@ -21,7 +21,7 @@ uint64_t perft(const int depth) {
   uint64_t nodes = 0;
   int count;
   move list[256];
-  pos.move_list(pos.us(), list, count);
+  pos.move_list(pos.color_us(), list, count);
   if (depth == 1)
     return count;
   for (int i = 0; i < count; i++) {
@@ -34,7 +34,7 @@ uint64_t perft(const int depth) {
 
 void uci_perft(const int depth) {
   pos.set_fen(start_fen);
-  std::cout << pos << std::endl;
+  std::cout << pos << '\n';
 
   for (int d = 1; d <= depth; d++) {
     const std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
@@ -50,7 +50,7 @@ void uci_perft(const int depth) {
 
 void uci_bench(const int depth) {
   pos.set_fen(start_fen);
-  std::cout << pos << std::endl;
+  std::cout << pos << '\n';
   sp.post = false;
   sp.flags = tf_depth;
   for (int d = 1; d <= depth; d++) {
@@ -68,7 +68,7 @@ void uci_bench(const int depth) {
 }
 
 void uci_eval() {
-  const auto score = static_cast<uint16_t>(eval());
+  const auto score = static_cast<uint16_t>(eval(pos));
   std::cout << "score " << score << std::endl;
 }
 
@@ -96,11 +96,11 @@ void uci_command(std::string str) {
     return;
 
   if (const std::string command = split[0]; command == "uci") {
-    std::cout << "id name " << engine << " " << version << std::endl;
-    std::cout << "id author " << author << std::endl;
-    std::cout << "option name Hash type spin default " << options.hash << " min 64 max 65536" << std::endl;
-    std::cout << "option name Contempt type spin default " << options.contempt << " min -50 max 50" << std::endl;
-    std::cout << "option name Ponder type check default " << options.ponder << " true false" << std::endl;
+    std::cout << "id name kobol\n";
+    std::cout << "id author maksim\n";
+    std::cout << "option name Hash type spin default " << options.hash << " min 64 max 65536\n";
+    std::cout << "option name Contempt type spin default " << options.contempt << " min -50 max 50\n";
+    std::cout << "option name Ponder type check default " << options.ponder << " true false\n";
     std::cout << "uciok" << std::endl;
   }
   else if (command == "isready")
@@ -182,9 +182,9 @@ void uci_command(std::string str) {
     if (sp.flags & tf_time) {
       sp.flags |= tf_movetime;
       if (sp.movestogo)
-        sp.movetime = sp.time[pos.us()] / sp.movestogo;
+        sp.movetime = sp.time[pos.color_us()] / sp.movestogo;
       else
-        sp.movetime = sp.time[pos.us()] / 32 + sp.inc[pos.us()] / 2;
+        sp.movetime = sp.time[pos.color_us()] / 32 + sp.inc[pos.color_us()] / 2;
       sp.movetime = sp.movetime - options.overhead;
     }
     search_iterate();
