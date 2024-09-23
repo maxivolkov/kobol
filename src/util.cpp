@@ -3,6 +3,8 @@
 #include <ostream>
 #include "util.h"
 
+#include "uci.h"
+
 void engine_info() {
   std::cout << engine << " " << version << std::endl;
 }
