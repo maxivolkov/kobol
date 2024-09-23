@@ -37,7 +37,7 @@ public:
   uint64_t pinned;
 
   position() : hash_(0), side_to_play(white), history_index(0), board{},
-               piece_bb{0}, checkers(0), pinned(0) {
+    piece_bb{ 0 }, checkers(0), pinned(0) {
     for (auto& i : board) i = no_piece;
     history[0] = undo_info();
   }
@@ -84,8 +84,8 @@ public:
     return
       piece_bb[white_pawn] | piece_bb[white_knight] | piece_bb[white_bishop] | piece_bb[white_rook] | piece_bb[
         white_queen] | piece_bb[white_king] |
-      piece_bb[black_pawn] | piece_bb[black_knight] | piece_bb[black_bishop] | piece_bb[black_rook] | piece_bb[
-        black_queen] | piece_bb[black_king];
+          piece_bb[black_pawn] | piece_bb[black_knight] | piece_bb[black_bishop] | piece_bb[black_rook] | piece_bb[
+            black_queen] | piece_bb[black_king];
   }
 
   [[nodiscard]] piece at(const square sq) const { return board[sq]; }
@@ -140,41 +140,41 @@ inline uint64_t position::orthogonal_sliders(const color c) const {
 
 inline bool position::not_only_pawns() const {
   return side_to_play == white
-           ? piece_bb[white_knight] || piece_bb[white_bishop] || piece_bb[white_rook] || piece_bb[white_queen]
-           : piece_bb[black_knight] || piece_bb[black_bishop] || piece_bb[black_rook] || piece_bb[black_queen];
+    ? piece_bb[white_knight] || piece_bb[white_bishop] || piece_bb[white_rook] || piece_bb[white_queen]
+    : piece_bb[black_knight] || piece_bb[black_bishop] || piece_bb[black_rook] || piece_bb[black_queen];
 }
 
 inline uint64_t position::all_pieces(const color c) const {
   return c == white
-           ? piece_bb[white_pawn] | piece_bb[white_knight] | piece_bb[white_bishop] |
-           piece_bb[white_rook] | piece_bb[white_queen] | piece_bb[white_king]
-           : piece_bb[black_pawn] | piece_bb[black_knight] | piece_bb[black_bishop] |
-           piece_bb[black_rook] | piece_bb[black_queen] | piece_bb[black_king];
+    ? piece_bb[white_pawn] | piece_bb[white_knight] | piece_bb[white_bishop] |
+    piece_bb[white_rook] | piece_bb[white_queen] | piece_bb[white_king]
+    : piece_bb[black_pawn] | piece_bb[black_knight] | piece_bb[black_bishop] |
+    piece_bb[black_rook] | piece_bb[black_queen] | piece_bb[black_king];
 }
 
 inline uint64_t position::attackers_from(const color c, const square s, const uint64_t occ) const {
   return c == white
-           ? (pawnattacks(black, s) & piece_bb[white_pawn]) |
-           (attacks<knight>(s, occ) & piece_bb[white_knight]) |
-           (attacks<bishop>(s, occ) & (piece_bb[white_bishop] | piece_bb[white_queen])) |
-           (attacks<rook>(s, occ) & (piece_bb[white_rook] | piece_bb[white_queen]))
-           : (pawnattacks(white, s) & piece_bb[black_pawn]) |
-           (attacks<knight>(s, occ) & piece_bb[black_knight]) |
-           (attacks<bishop>(s, occ) & (piece_bb[black_bishop] | piece_bb[black_queen])) |
-           (attacks<rook>(s, occ) & (piece_bb[black_rook] | piece_bb[black_queen]));
+    ? (pawnattacks(black, s) & piece_bb[white_pawn]) |
+    (attacks<knight>(s, occ) & piece_bb[white_knight]) |
+    (attacks<bishop>(s, occ) & (piece_bb[white_bishop] | piece_bb[white_queen])) |
+    (attacks<rook>(s, occ) & (piece_bb[white_rook] | piece_bb[white_queen]))
+    : (pawnattacks(white, s) & piece_bb[black_pawn]) |
+    (attacks<knight>(s, occ) & piece_bb[black_knight]) |
+    (attacks<bishop>(s, occ) & (piece_bb[black_bishop] | piece_bb[black_queen])) |
+    (attacks<rook>(s, occ) & (piece_bb[black_rook] | piece_bb[black_queen]));
 }
 
 inline uint64_t position::attackers(const square s) const {
   const uint64_t occ = all_pieces();
   return side_to_play == black
-           ? (pawnattacks(black, s) & piece_bb[white_pawn]) |
-           (attacks<knight>(s, occ) & piece_bb[white_knight]) |
-           (attacks<bishop>(s, occ) & (piece_bb[white_bishop] | piece_bb[white_queen])) |
-           (attacks<rook>(s, occ) & (piece_bb[white_rook] | piece_bb[white_queen]))
-           : (pawnattacks(white, s) & piece_bb[black_pawn]) |
-           (attacks<knight>(s, occ) & piece_bb[black_knight]) |
-           (attacks<bishop>(s, occ) & (piece_bb[black_bishop] | piece_bb[black_queen])) |
-           (attacks<rook>(s, occ) & (piece_bb[black_rook] | piece_bb[black_queen]));
+    ? (pawnattacks(black, s) & piece_bb[white_pawn]) |
+    (attacks<knight>(s, occ) & piece_bb[white_knight]) |
+    (attacks<bishop>(s, occ) & (piece_bb[white_bishop] | piece_bb[white_queen])) |
+    (attacks<rook>(s, occ) & (piece_bb[white_rook] | piece_bb[white_queen]))
+    : (pawnattacks(white, s) & piece_bb[black_pawn]) |
+    (attacks<knight>(s, occ) & piece_bb[black_knight]) |
+    (attacks<bishop>(s, occ) & (piece_bb[black_bishop] | piece_bb[black_queen])) |
+    (attacks<rook>(s, occ) & (piece_bb[black_rook] | piece_bb[black_queen]));
 }
 
 class move_list {
