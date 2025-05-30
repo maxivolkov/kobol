@@ -2,7 +2,7 @@
 #include <random>
 #include "main.h"
 
-static uint64_t rand_u64() {
+inline uint64_t rand_u64() {
   std::random_device rd;
   std::mt19937_64 gen(rd());
   std::uniform_int_distribution<uint64_t> dis;

@@ -35,8 +35,7 @@ void init_rook_attacks() {
       index = index >> rook_attack_shifts[sq];
       rook_attacks[sq][index] = get_rook_attacks_for_init(sq, subset);
       subset = subset - rook_attack_masks[sq] & rook_attack_masks[sq];
-    }
-    while (subset);
+    } while (subset);
   }
 }
 
@@ -71,8 +70,7 @@ void init_bishop_attacks() {
       index = index >> bishop_attack_shifts[sq];
       bishop_attacks[sq][index] = get_bishop_attacks_for_init(sq, subset);
       subset = subset - bishop_attack_masks[sq] & bishop_attack_masks[sq];
-    }
-    while (subset);
+    } while (subset);
   }
 }
 
@@ -93,10 +91,10 @@ void init_squares_between() {
       const uint64_t sqs = square_bb[sq1] | square_bb[sq2];
       if (file_of(sq1) == file_of(sq2) || rank_of(sq1) == rank_of(sq2))
         squares_between_bb[sq1][sq2] =
-          get_rook_attacks_for_init(sq1, sqs) & get_rook_attacks_for_init(sq2, sqs);
+        get_rook_attacks_for_init(sq1, sqs) & get_rook_attacks_for_init(sq2, sqs);
       else if (diagonal_of(sq1) == diagonal_of(sq2) || anti_diagonal_of(sq1) == anti_diagonal_of(sq2))
         squares_between_bb[sq1][sq2] =
-          get_bishop_attacks_for_init(sq1, sqs) & get_bishop_attacks_for_init(sq2, sqs);
+        get_bishop_attacks_for_init(sq1, sqs) & get_bishop_attacks_for_init(sq2, sqs);
     }
 }
 
@@ -105,10 +103,10 @@ void init_line() {
     for (square sq2 = a1; sq2 <= h8; ++sq2) {
       if (file_of(sq1) == file_of(sq2) || rank_of(sq1) == rank_of(sq2))
         line[sq1][sq2] = (get_rook_attacks_for_init(sq1, 0) & get_rook_attacks_for_init(sq2, 0))
-          | square_bb[sq1] | square_bb[sq2];
+        | square_bb[sq1] | square_bb[sq2];
       else if (diagonal_of(sq1) == diagonal_of(sq2) || anti_diagonal_of(sq1) == anti_diagonal_of(sq2))
         line[sq1][sq2] = (get_bishop_attacks_for_init(sq1, 0) & get_bishop_attacks_for_init(sq2, 0))
-          | square_bb[sq1] | square_bb[sq2];
+        | square_bb[sq1] | square_bb[sq2];
     }
 }
 

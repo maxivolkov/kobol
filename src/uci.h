@@ -1,5 +1,4 @@
 #pragma once
-
 #include "search.h"
 
 struct s_options {

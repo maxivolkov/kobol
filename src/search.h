@@ -1,7 +1,5 @@
 #pragma once
-
 #include <chrono>
-
 #include "move.h"
 
 constexpr auto max_depth = 100;
@@ -40,5 +38,4 @@ struct search_driver {
 };
 
 inline search_driver sd;
-
 void search_iterate();
